@@ -1,0 +1,55 @@
+function creerTableTransition() {
+    return {
+        'A': {
+            '': ['B', 'C'],
+            'B': ['B', 'D']
+        },
+        'B': {
+            'A': ['A', 'E', 'D'],
+            'E': ['A']
+        },
+        'C': {
+            'A': ['D']
+        },
+        'D': {
+            'B': [],
+            'C': []
+        },
+        'E': {
+            'B': []
+        }
+    };
+}
+
+function parcours(graphe, tableTransition, precedent, source, destination, areteVisitee, chemin, sommetsVisites) {
+    if (source === destination) {
+        return chemin.slice();
+    }
+
+    sommetsVisites.add(source);
+
+    var transitions = tableTransition[source][precedent] || [];
+    for (var i = 0; i < transitions.length; i++) {
+        var voisin = transitions[i];
+        var arete = source + '-' + voisin;
+        if (!areteVisitee.has(arete) && !sommetsVisites.has(voisin)) {
+            areteVisitee.add(arete);
+            chemin.push(arete); 
+
+            var resultat = parcours(graphe, tableTransition, source, voisin, destination, areteVisitee, chemin, sommetsVisites);
+            if (resultat !== null) {
+                return resultat;
+            }
+            chemin.pop();
+            areteVisitee.delete(arete);
+        }
+    }
+
+    sommetsVisites.delete(source);
+
+    return null;
+}
+
+var tableTransition = creerTableTransition();
+var chemin = parcours(null, tableTransition, '', 'A', 'D', new Set(), [], new Set());
+console.log(chemin);
