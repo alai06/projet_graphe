@@ -1,10 +1,26 @@
-function creerTableTransition() {
-    return {
+let tableTransition2 = {
+    A: { '': ['B', 'C', 'E'] },
+    B: { 'A': ['C', 'D', 'F'], 'C': ['G'] },
+    C: { 'A': ['B'], 'B': ['F', 'H'], 'E': ['D'] },
+    D: { 'B': ['H'], 'C': ['G'] },
+    E: { 'A': ['F'], 'C': ['A', 'G'] },
+    F: { 'B': ['D', 'I'], 'E': ['H', 'J'] },
+    G: { 'C': ['I'], 'D': ['H'] },
+    H: { 'F': ['I', 'J'], 'G': ['B'] },
+    I: { 'G': ['J'], 'H': ['E'] },
+    J: { 'F': ['I'], 'I': ['G'] }
+};
+let tableTransition =  {
         'A': {
             '': ['a1', 'a3', 'a4'],
             'a1': ['a3', 'a4'],
             'a3': ['a1', 'a4'],
             'a4': ['a1', 'a3', 'a9', 'a10'],
+        },
+        'a1': {
+            'A': ['a2', 'a19'],
+            'a2': ['A'],
+            'a19': ['A']
         },
         'a2': {
             'a1': ['a3', 'a5'],
@@ -43,220 +59,220 @@ function creerTableTransition() {
         },
         'a9': {
             'a4': ['a8'],
-            'a8': ['a4','a14'],
+            'a8': ['a4', 'a14'],
             'a14': ['a8']
         },
         'a10': {
             'a4': ['a16'],
-            'a16': ['a4','a17'],
+            'a16': ['a4', 'a17'],
             'a13': ['a16']
         },
         'a11': {
             'a6': ['a7'],
-            'a7': ['a6','a18'],
+            'a7': ['a6', 'a18'],
             'a18': ['a7']
         },
         'a12': {
-            'a7': ['a19','a20'],
+            'a7': ['a19', 'a20'],
             'a19': ['a7'],
             'a20': ['a7']
-        }
+        },
         'a13': {
             'a8': ['a22'],
             'a21': ['a22'],
-            'a22': ['a8','a21]
+            'a22': ['a8', 'a21']
         },
         'a14': {
             'a9': ['a15'],
-            'a15': ['a9','a23'],
+            'a15': ['a9', 'a23'],
             'a23': ['a15']
         },
         'a15': {
             'a14': ['a16'],
-            'a16': ['a14','a24'],
+            'a16': ['a14', 'a24'],
             'a24': ['a16']
         },
         'a16': {
             'a10': ['a25'],
             'a15': ['a25'],
-            'a25': ['a15','a10']
+            'a25': ['a15', 'a10']
         },
         'a17': {
-            'a10': ['a25','a26'],
-            'a25': ['a6','a18'],
+            'a10': ['a25', 'a26'],
+            'a25': ['a6', 'a18'],
             'a26': ['a7']
         },
         'a18': {
-            'a11': ['a20','a27'],
+            'a11': ['a20', 'a27'],
             'a20': ['a11'],
             'a27': ['a11']
         },
         'a19': {
             'a1': ['a12'],
-            'a12': ['a1','a26'],
+            'a12': ['a1', 'a26'],
             'a26': ['a12']
         },
         'a20': {
             'a12': ['a18'],
-            'a18': ['a12','a28'],
+            'a18': ['a12', 'a28'],
             'a28': ['a18']
         },
         'a21': {
             'a13': ['a30'],
             'a29': ['a30'],
-            'a30': ['a13','a29']
+            'a30': ['a13', 'a29']
         },
         'a22': {
             'a13': ['a32'],
             'a31': ['a32'],
-            'a32': ['a13','a31']
+            'a32': ['a13', 'a31']
         },
         'a23': {
-            'a14': ['a33','a34'],
+            'a14': ['a33', 'a34'],
             'a33': ['a14'],
             'a34': ['a14']
         },
         'a24': {
             'a15': ['a35'],
-            'a35': ['a15','a36'],
+            'a35': ['a15', 'a36'],
             'a36': ['a35']
-        }, 
+        },
         'a25': {
             'a16': ['a37'],
             'a17': ['a37'],
-            'a37': ['a16','a17']
+            'a37': ['a16', 'a17']
         },
         'a26': {
-            'a17': ['a38','],
+            'a17': ['a38'],
             'a19': ['a17'],
             'a38': ['a17']
         },
         'a27': {
             'a18': ['a39'],
             'a28': ['a39'],
-            'a39': ['a18','a28']
+            'a39': ['a18', 'a28']
         },
         'a28': {
             'a20': ['a38'],
             'a27': ['a38'],
-            'a38': ['a20','a27']
+            'a38': ['a20', 'a27']
         },
         'a29': {
             'a21': ['a40'],
             'a31': ['a40'],
-            'a40': ['a21','a31']
+            'a40': ['a21', 'a31']
         },
         'a30': {
-            'a21': ['a40','a41'],
+            'a21': ['a40', 'a41'],
             'a40': ['a21'],
             'a41': ['a21']
         },
         'a31': {
-            'a22': ['a29','a42],
+            'a22': ['a29', 'a42'],
             'a29': ['a22'],
             'a42': ['a22']
         },
         'a32': {
             'a10': ['a22'],
-            'a22': ['a10','a43'],
+            'a22': ['a10', 'a43'],
             'a43': ['a22']
         },
         'a33': {
             'a23': ['a44'],
-            'a44': ['a23','a45'],
+            'a44': ['a23', 'a45'],
             'a45': ['a23']
         },
         'a34': {
             'a23': ['a46'],
             'a45': ['a46'],
-            'a46': ['a23','a45']
+            'a46': ['a23', 'a45']
         },
         'a35': {
             'a21': ['a40'],
             'a31': ['a40'],
-            'a40': ['a21','a31']
+            'a40': ['a21', 'a31']
         },
         'a36': {
             'a24': ['a48'],
             'a47': ['a48'],
-            'a48': ['a24','a47']
+            'a48': ['a24', 'a47']
         },
         'a37': {
-            'a25': ['a48','a49'],
+            'a25': ['a48', 'a49'],
             'a48': ['a25'],
             'a49': ['a25']
         },
         'a38': {
             'a26': ['a49'],
             'a28': ['a49'],
-            'a49': ['a26','a28']
+            'a49': ['a26', 'a28']
         },
         'a39': {
-            'a27': ['a48','a49'],
+            'a27': ['a48', 'a49'],
             'a48': ['a27'],
             'a49': ['a27']
         },
         'a40': {
             'a29': ['a50'],
             'a41': ['a50'],
-            'a50': ['a29','a41']
+            'a50': ['a29', 'a41']
         },
         'a41': {
-            'a30': ['a51','a52'],
+            'a30': ['a51', 'a52'],
             'a51': ['a30'],
             'a52': ['a30']
         },
         'a42': {
             'a24': ['a48'],
             'a47': ['a48'],
-            'a48': ['a24','a47']
+            'a48': ['a24', 'a47']
         },
         'a43': {
             'a32': ['a54'],
             'a53': ['a53'],
-            'a54': ['a32','a53']
+            'a54': ['a32', 'a53']
         },
         'a44': {
             'a33': ['a55'],
-            'a55': ['a33','a56'],
+            'a55': ['a33', 'a56'],
             'a56': ['a55']
         },
         'a45': {
             'a33': ['a57'],
             'a34': ['a57'],
-            'a57': ['a33','a34']
+            'a57': ['a33', 'a34']
         },
         'a46': {
-            'a34': ['a35','a58'],
+            'a34': ['a35', 'a58'],
             'a35': ['a34'],
             'a58': ['a34']
         },
         'a47': {
             'a24': ['a48'],
             'a47': ['a48'],
-            'a48': ['a24','a47']
+            'a48': ['a24', 'a47']
         },
         'a48': {
             'a36': ['a59'],
-            'a59': ['a36','a60'],
+            'a59': ['a36', 'a60'],
             'a60': ['a59']
         },
         'a49': {
             'a37': ['a38'],
-            'a38': ['a37','a39'],
+            'a38': ['a37', 'a39'],
             'a39': ['a38']
         },
         'a50': {
-            'a40': ['a61','a62'],
+            'a40': ['a61', 'a62'],
             'a61': ['a40'],
             'a62': ['a40']
         },
         'a51': {
-            'a41': ['a63'],
-            'a52': ['a63'],
-            'a63': ['a41','a52']
+            'a41': ['a63', 'a64'],
+            'a63': ['a41'],
+            'a64': ['a41']
         },
-        'a52': {
+      'a52': {
             'a41': ['a56'],
             'a51': ['a56'],
             'a56': ['a41','a51']
@@ -349,7 +365,7 @@ function creerTableTransition() {
         },
         'a70': {
             'a60': ['a82'],
-            'a82': ['a60',a83'],
+            'a82': ['a60','a83'],
             'a83': ['a82']
         },
         'a71': {
@@ -370,7 +386,7 @@ function creerTableTransition() {
         'a74': {
             'a63': ['a80'],
             'a73': ['a80'],
-            'a74': ['a63','a73']
+            'a80': ['a63','a73']
         },
         'a75': {
             'a64': ['a65'],
@@ -453,9 +469,9 @@ function creerTableTransition() {
             'a93': ['a78']
         },
         'a91': {
-            'a79': ['a79','a80'],
+            'a79': ['a90'],
             'a83': ['a90'],
-            'a90': ['a79']
+            'a90': ['a79','a83']
         },
         'a92': {
             'a80': ['a97'],
@@ -520,7 +536,7 @@ function creerTableTransition() {
             'a97': ['a98'],
             'a98': ['a97','a110','a111'],
             'a110': ['a98'],
-            'a111': ['a98'],
+            'a111': ['a98']
         },
         'a105': {
             'a99': ['a112'],
@@ -576,27 +592,26 @@ function creerTableTransition() {
         'a115': {
             'a110': ['a113'],
             'a113': ['a110','a117'],
-            'a117': ['a113'],
+            'a117': ['a113']
         },
         'a116': {
             'a111': ['a117','a118'],
             'a117': ['a111'],
-            'a118': ['a111'],
+            'a118': ['a111']
         },
         'a117': {
             'a112': ['a115','a116'],
             'a115': ['a112'],
-            'a116': ['a112'],
+            'a116': ['a112']
         },
         'a118': {
             'a112': ['a114'],
             'a114': ['a112','a116'],
-            'a116': ['a114'],
+            'a116': ['a114']
         }
     };
-}
 
-function parcours(graphe, tableTransition, precedent, source, destination, areteVisitee, chemin, sommetsVisites) {
+function parcoursdfs(graphe, tableTransition, precedent, source, destination, areteVisitee, chemin, sommetsVisites) {
     if (source === destination) {
         return chemin.slice();
     }
@@ -624,7 +639,39 @@ function parcours(graphe, tableTransition, precedent, source, destination, arete
 
     return null;
 }
+function trouverCheminAvecPredecesseurBFS(tableTransition, sommetDepart, sommetFinal) {
+    let queue = [{ sommet: sommetDepart, predecesseur: '', chemin: [], aretesVisitees: new Set() }];
 
+    let visite = new Set([sommetDepart + '_']);
+
+    while (queue.length > 0) {
+        let { sommet, predecesseur, chemin, aretesVisitees } = queue.shift();
+        if (sommet === sommetFinal) {
+            return chemin;
+        }
+        const transitionsPossibles = tableTransition[sommet][predecesseur] || [];
+        for (let voisin of transitionsPossibles) {
+            let arete = `${sommet}-${voisin}`;
+            
+            if (!aretesVisitees.has(arete)) {
+                let nouvellesAretesVisitees = new Set(aretesVisitees);
+                nouvellesAretesVisitees.add(arete);
+                let cleVisite = voisin + '-' + sommet;
+                if (!visite.has(cleVisite)) {
+                    visite.add(cleVisite);
+                    queue.push({
+                        sommet: voisin,
+                        predecesseur: sommet,
+                        chemin: [...chemin, arete],
+                        aretesVisitees: nouvellesAretesVisitees 
+                    });
+                }
+            }
+        }
+    }
+
+    return null;
+}
 var tableTransition = creerTableTransition();
-var chemin = parcours(null, tableTransition, '', 'A', 'B', new Set(), [], new Set());
+var chemin = parcoursdfs(null, tableTransition, '', 'A', 'B', new Set(), [], new Set());
 console.log(chemin);
