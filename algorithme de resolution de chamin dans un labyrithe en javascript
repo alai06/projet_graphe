@@ -552,6 +552,47 @@ function creerTableTransition() {
             'a108': ['a104'],
             'a115': ['a104']
         },
+        'a111': {
+            'B': ['a116','a104'],
+            'a116': ['B'],
+            'a114': ['B']
+        },
+        'a112': {
+            'a105': ['a107','a117','a118'],
+            'a107': ['a105'],
+            'a117': ['a105'],
+            'a118': ['a105']
+        },
+        'a113': {
+            'a106': ['a107'],
+            'a107': ['a106','a106'],
+            'a115': ['a107']
+        },
+        'a114': {
+            'B': ['a118'],
+            'a109': ['a118'],
+            'a118': ['B','a109']
+        },
+        'a115': {
+            'a110': ['a113'],
+            'a113': ['a110','a117'],
+            'a117': ['a113'],
+        },
+        'a116': {
+            'a111': ['a117','a118'],
+            'a117': ['a111'],
+            'a118': ['a111'],
+        },
+        'a117': {
+            'a112': ['a115','a116'],
+            'a115': ['a112'],
+            'a116': ['a112'],
+        },
+        'a118': {
+            'a112': ['a114'],
+            'a114': ['a112','a116'],
+            'a116': ['a114'],
+        }
     };
 }
 
@@ -585,5 +626,5 @@ function parcours(graphe, tableTransition, precedent, source, destination, arete
 }
 
 var tableTransition = creerTableTransition();
-var chemin = parcours(null, tableTransition, '', 'A', 'D', new Set(), [], new Set());
+var chemin = parcours(null, tableTransition, '', 'A', 'B', new Set(), [], new Set());
 console.log(chemin);
