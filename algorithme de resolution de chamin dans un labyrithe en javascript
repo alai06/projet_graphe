@@ -672,6 +672,5 @@ function trouverCheminAvecPredecesseurBFS(tableTransition, sommetDepart, sommetF
 
     return null;
 }
-var tableTransition = creerTableTransition();
-var chemin = parcoursdfs(null, tableTransition, '', 'A', 'B', new Set(), [], new Set());
+var chemin = trouverCheminAvecPredecesseurBFS(tableTransition, 'A','a80');
 console.log(chemin);
