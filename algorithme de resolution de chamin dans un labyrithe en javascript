@@ -15,7 +15,7 @@ let tableTransition =  {
             '': ['a1', 'a3', 'a4'],
             'a1': ['a3', 'a4'],
             'a3': ['a1', 'a4'],
-            'a4': ['a1', 'a3', 'a9', 'a10'],
+            'a4': ['a1', 'a3'],
         },
         'a1': {
             'A': ['a2', 'a19'],
@@ -25,7 +25,7 @@ let tableTransition =  {
         'a2': {
             'a1': ['a3', 'a5'],
             'a3': ['a1'],
-            'a5': ['a6', 'a7']
+            'a5': ['a1']
         },
         'a3': {
             'A': ['a2'],
@@ -54,7 +54,7 @@ let tableTransition =  {
         },
         'a8': {
             'a3': ['a9'],
-            'a9': ['a3'],
+            'a9': ['a3','a13'],
             'a13': ['a9']
         },
         'a9': {
@@ -99,8 +99,8 @@ let tableTransition =  {
         },
         'a17': {
             'a10': ['a25', 'a26'],
-            'a25': ['a6', 'a18'],
-            'a26': ['a7']
+            'a25': ['a10'],
+            'a26': ['a10']
         },
         'a18': {
             'a11': ['a20', 'a27'],
@@ -143,7 +143,7 @@ let tableTransition =  {
             'a37': ['a16', 'a17']
         },
         'a26': {
-            'a17': ['a38'],
+            'a17': ['a38','a19'],
             'a19': ['a17'],
             'a38': ['a17']
         },
@@ -180,7 +180,7 @@ let tableTransition =  {
         'a33': {
             'a23': ['a44'],
             'a44': ['a23', 'a45'],
-            'a45': ['a23']
+            'a45': ['a44']
         },
         'a34': {
             'a23': ['a46'],
@@ -188,9 +188,9 @@ let tableTransition =  {
             'a46': ['a23', 'a45']
         },
         'a35': {
-            'a21': ['a40'],
-            'a31': ['a40'],
-            'a40': ['a21', 'a31']
+            'a46': ['a24'],
+            'a24': ['a68','a46'],
+            'a68': ['a24']
         },
         'a36': {
             'a24': ['a48'],
@@ -214,8 +214,8 @@ let tableTransition =  {
         },
         'a40': {
             'a29': ['a50'],
-            'a41': ['a50'],
-            'a50': ['a29', 'a41']
+            'a30': ['a50'],
+            'a50': ['a29', 'a30']
         },
         'a41': {
             'a30': ['a51', 'a52'],
@@ -223,13 +223,13 @@ let tableTransition =  {
             'a52': ['a30']
         },
         'a42': {
-            'a24': ['a48'],
-            'a47': ['a48'],
-            'a48': ['a24', 'a47']
+            'a54': ['a31'],
+            'a31': ['a89','a54'],
+            'a89': ['a31']
         },
         'a43': {
             'a32': ['a54'],
-            'a53': ['a53'],
+            'a53': ['a54'],
             'a54': ['a32', 'a53']
         },
         'a44': {
@@ -253,9 +253,9 @@ let tableTransition =  {
             'a48': ['a24', 'a47']
         },
         'a48': {
-            'a36': ['a59'],
-            'a59': ['a36', 'a60'],
-            'a60': ['a59']
+            'a36': ['a37','a39'],
+            'a37': ['a36'],
+            'a39': ['a36']
         },
         'a49': {
             'a37': ['a38'],
@@ -269,8 +269,8 @@ let tableTransition =  {
         },
         'a51': {
             'a41': ['a63', 'a64'],
-            'a63': ['a41'],
-            'a64': ['a41']
+            'a63': ['a41','a51'],
+            'a52': ['a63']
         },
       'a52': {
             'a41': ['a56'],
@@ -283,9 +283,9 @@ let tableTransition =  {
             'a64': ['a10','a43']
         },
         'a54': {
-            'a42': ['a48'],
-            'a43': ['a48'],
-            'a65': ['a24','a47']
+            'a42': ['a43','a65'],
+            'a43': ['a42'],
+            'a65': ['a42']
         },
         'a55': {
             'a44': ['a57'],
@@ -304,18 +304,18 @@ let tableTransition =  {
         },
         'a58': {
             'a46': ['a57'],
-            'a57': ['a68'],
+            'a57': ['a68','a46'],
             'a68': ['a57']
         },
         'a59': {
             'a47': ['a69'],
             'a68': ['a69'],
-            'a69': ['a47']
+            'a69': ['a47','a68']
         },
         'a60': {
             'a47': ['a70'],
             'a69': ['a70'],
-            'a70': ['a47','a59']
+            'a70': ['a47','a69']
         },
         'a61': {
             'a50': ['a72'],
@@ -334,8 +334,8 @@ let tableTransition =  {
         },
         'a64': {
             'a53': ['a75','a76'],
-            'a75': ['a53','a53'],
-            'a76': ['a24','a47']
+            'a75': ['a53'],
+            'a76': ['a53']
         },
         'a65': {
             'a54': ['a75','a77'],
@@ -369,9 +369,9 @@ let tableTransition =  {
             'a83': ['a82']
         },
         'a71': {
+            'a84': ['a73','a61'],
             'a61': ['a84'],
-            'a73': ['a84'],
-            'a84': ['a61','a73']
+            'a73': ['a84']
         },
         'a72': {
             'a61': ['a85','a86'],
@@ -379,8 +379,8 @@ let tableTransition =  {
             'a86': ['a61']
         },
         'a73': {
+            'a71': ['a74','a62'],
             'a62': ['a71'],
-            'a71': ['a62','a74'],
             'a74': ['a71']
         },
         'a74': {
@@ -414,8 +414,8 @@ let tableTransition =  {
             'a91': ['a66']
         },
         'a80': {
+            'a74': ['a92','a67'],
             'a67': ['a74'],
-            'a74': ['a67','a92'],
             'a92': ['a74']
         },
         'a81': {
@@ -441,7 +441,7 @@ let tableTransition =  {
         'a85': {
             'a72': ['a89'],
             'a86': ['a89'],
-            'a89': ['a72','a89']
+            'a89': ['a72','a86']
         },
         'a86': {
             'a72': ['a77'],
@@ -456,12 +456,12 @@ let tableTransition =  {
         'a88': {
             'a76': ['a94'],
             'a94': ['a76','a95'],
-            'a95': ['a76']
+            'a95': ['a94']
         },
         'a89': {
-            'a78': ['a79','a96'],
-            'a79': ['a78'],
-            'a96': ['a78']
+            'a85': ['a77','a42'],
+            'a42': ['a85'],
+            'a77': ['a85']
         },
         'a90': {
             'a78': ['a91','a93'],
@@ -481,7 +481,7 @@ let tableTransition =  {
         'a93': {
             'a83': ['a90'],
             'a90': ['a83','a99'],
-            'a99': ['a']
+            'a99': ['a90']
         },
         'a94': {
             'a84': ['a88','a100'],
@@ -544,9 +544,9 @@ let tableTransition =  {
             'a112': ['a99','a109']
         },
         'a106': {
+            'a108': ['a113','a101'],
             'a101': ['a108'],
-            'a107': ['a108'],
-            'a108': ['a101','a107']
+            'a113': ['a108']
         },
         'a107': {
             'a101': ['a112'],
@@ -669,6 +669,71 @@ function trouverCheminAvecPredecesseurBFS(tableTransition, sommetDepart, sommetF
             }
         }
     }
+function trouverCheminAvecPredecesseurBFS2(tableTransition, sommetDepart, sommetFinal) {
+    // File d'attente pour BFS avec trace des décisions
+    let queue = [{ 
+        sommet: sommetDepart, 
+        predecesseur: Object.keys(tableTransition[sommetDepart])[0], 
+        chemin: [], 
+        aretesVisitees: new Set(),
+        retourPossible: false // Permet le retour en arrière si besoin
+    }];
+
+    let visite = new Set([`${sommetDepart}_`]); // Marque les sommets visités
+
+    while (queue.length > 0) {
+        // Défilement du prochain état
+        let { sommet, predecesseur, chemin, aretesVisitees, retourPossible } = queue.shift();
+
+        // Si le sommet final est atteint, retourner le chemin
+        if (sommet === sommetFinal) {
+            return chemin;
+        }
+
+        // Récupération des voisins possibles
+        const transitionsPossibles = tableTransition[sommet][predecesseur] || [];
+        let cheminEtendu = false;
+
+        for (let voisin of transitionsPossibles) {
+            let arete = `${sommet}-${voisin}`;
+
+            // Vérifier si cette arête n'a pas encore été visitée
+            if (!aretesVisitees.has(arete)) {
+                cheminEtendu = true; // On peut avancer dans cette direction
+                let nouvellesAretesVisitees = new Set(aretesVisitees);
+                nouvellesAretesVisitees.add(arete);
+
+                // Clef de visite pour éviter de revisiter
+                let cleVisite = `${voisin}-${sommet}`;
+                if (!visite.has(cleVisite)) {
+                    visite.add(cleVisite);
+
+                    queue.push({
+                        sommet: voisin,
+                        predecesseur: sommet,
+                        chemin: [...chemin, arete],
+                        aretesVisitees: nouvellesAretesVisitees,
+                        retourPossible: false // Pas besoin de retour ici, on avance
+                    });
+                }
+            }
+        }
+
+        // Si aucun chemin n'est trouvé à partir de ce sommet, marquer pour retour
+        if (!cheminEtendu && !retourPossible) {
+            queue.push({
+                sommet,
+                predecesseur,
+                chemin,
+                aretesVisitees,
+                retourPossible: true // Active le retour au sommet précédent
+            });
+        }
+    }
+
+    // Aucun chemin trouvé
+    return null;
+}
 
     return null;
 }
