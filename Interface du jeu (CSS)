@@ -1,0 +1,26 @@
+        body { 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid black;
+        }
+        .bouton {
+            display: block;
+            background-color: #719fee;
+            border-radius: 10px;
+            border: 4px double #1f69ec;
+            color: #ffffff;
+            font-size: 20px;
+            padding: 10px;
+            width: 200px;
+            margin: 20px auto; /* Centrage horizontal automatique */
+            cursor: pointer;
+        }
+        .bouton:hover {
+            background-color: #5a88d6;
+        }
