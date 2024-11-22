@@ -1,0 +1,101 @@
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const w = canvas.width;
+const h = canvas.height;
+
+let mousePos = { x: 0, y: 0 };
+let vertices = []; // Stocke les sommets
+let player = { x: 220, y: 440, size: 8, color: 'black' };
+let playerActivated = false; // Contrôle si le joueur peut bouger
+
+// Dessiner un rectangle rempli
+function drawRectangle(obj) {
+    ctx.fillStyle = obj.color;
+    ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
+}
+
+// Dessiner un cercle
+function drawCircle(x, y, radius, color) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+// Gestion de la souris pour bouger le joueur
+canvas.addEventListener('mousemove', (e) => {
+    if (!playerActivated) return; // Ne pas bouger si le joueur n'est pas activé
+
+    const rect = canvas.getBoundingClientRect();
+    mousePos = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+    };
+    player.x = mousePos.x - player.size / 2;
+    player.y = mousePos.y - player.size / 2;
+});
+
+// Activer le joueur après un clic
+canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Vérifier si le clic est sur le joueur
+    if (
+        mouseX >= player.x &&
+        mouseX <= player.x + player.size &&
+        mouseY >= player.y &&
+        mouseY <= player.y + player.size
+    ) {
+        playerActivated = true; // Activer le mouvement du joueur
+    } else {
+        // Si on clique ailleurs, on peut ajouter des sommets
+        vertices.push({ x: mouseX, y: mouseY, radius: 10, color: 'blue' });
+    }
+});
+
+// Tester les collisions
+function isCollision(rect, circle) {
+    const distX = Math.abs(circle.x - rect.x - rect.size / 2);
+    const distY = Math.abs(circle.y - rect.y - rect.size / 2);
+
+    if (distX > (rect.size / 2 + circle.radius) || distY > (rect.size / 2 + circle.radius)) {
+        return false;
+    }
+    if (distX <= (rect.size / 2) || distY <= (rect.size / 2)) {
+        return true;
+    }
+    const dx = distX - rect.size / 2;
+    const dy = distY - rect.size / 2;
+    return (dx * dx + dy * dy <= (circle.radius * circle.radius));
+}
+
+// Boucle principale
+function mainLoop() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Dessiner l'image de fond
+    const img = new Image();
+    img.src = 'https://i.postimg.cc/d0h6W5vY/0fc248c7-2e0e-4272-b70d-5e095224b185.png';
+    ctx.drawImage(img, 0, 0, w, h);
+
+    // Dessiner les sommets
+    vertices.forEach((vertex, index) => {
+        drawCircle(vertex.x, vertex.y, vertex.radius, vertex.color);
+
+        // Vérifier les collisions avec le joueur
+        if (isCollision(player, vertex)) {
+            vertices.splice(index, 1); // Supprimer le sommet
+        }
+    });
+
+    // Dessiner le joueur
+    drawRectangle(player);
+
+    // Reboucler
+    requestAnimationFrame(mainLoop);
+}
+
+// Démarrer la boucle
+mainLoop();
