@@ -1,101 +1,157 @@
+// Fonction pour attribuer des coordonnées à chaque sommet
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const w = canvas.width;
-const h = canvas.height;
+//let player = { x: 220, y: 440, size: 8, color: 'black' };
+//let playerActivated = false; // Contrôle si le joueur peut bouger
+function assignCoordinates() {
+    // Centrer les coordonnées dans un canvas de 1000x1000
+    let coordinates = {
+        A: [300, 500],
+        B: [400, 700],
+        C: [600, 500],
+        D: [800, 300],
+        E: [300, 300],
+        F: [400, 100],
+        G: [600, 100],
+        H: [800, 500],
+        I: [900, 300],
+        J: [900, 100]
+    };
 
-let mousePos = { x: 0, y: 0 };
-let vertices = []; // Stocke les sommets
-let player = { x: 220, y: 440, size: 8, color: 'black' };
-let playerActivated = false; // Contrôle si le joueur peut bouger
-
-// Dessiner un rectangle rempli
-function drawRectangle(obj) {
-    ctx.fillStyle = obj.color;
-    ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
+    return coordinates;
 }
 
-// Dessiner un cercle
-function drawCircle(x, y, radius, color) {
+function sommet_acces(chemin, sommet, coord) {
+    // Réinitialiser le canvas avant de redessiner
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Redessiner toutes les arêtes
+    for (const [key, value] of Object.entries(chemin)) {
+        const [xStart, yStart] = coord[key];
+        for (const via in value) {
+            value[via].forEach(destination => {
+                const [xEnd, yEnd] = coord[destination];
+                ctx.beginPath();
+                ctx.moveTo(xStart, yStart);
+                ctx.lineTo(xEnd, yEnd);
+                ctx.stroke();
+            });
+        }
+    }
+
+    // Redessiner les sommets et marquer les accessibles
+    for (const [key, value] of Object.entries(chemin)) {
+        const [x, y] = coord[key];
+        if (key === sommet) {
+            // Mettre en surbrillance le sommet actuel
+            drawVertices(x, y, 20, key, "yellow");
+        } else if (Object.keys(chemin[sommet]).some(via => chemin[sommet][via].includes(key))) {
+            // Colorer les sommets accessibles en vert
+            drawVertices(x, y, 20, key, "green");
+        } else {
+            // Redessiner les autres sommets normalement
+            drawVertices(x, y, 20, key, "white");
+        }
+    }
+}
+
+// Modifie drawVertices pour permettre des couleurs personnalisées
+function drawVertices(x, y, radius, label, color = "white") {
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.fillStyle = color;
     ctx.fill();
+    ctx.stroke();
+
+    // Dessiner le texte au centre du cercle
+    ctx.fillStyle = "black";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, x, y);
 }
 
-// Gestion de la souris pour bouger le joueur
-canvas.addEventListener('mousemove', (e) => {
-    if (!playerActivated) return; // Ne pas bouger si le joueur n'est pas activé
+// Fonction pour représenter un graphe
+function graph_rep(chemin, coord) {
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-    const rect = canvas.getBoundingClientRect();
-    mousePos = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-    };
-    player.x = mousePos.x - player.size / 2;
-    player.y = mousePos.y - player.size / 2;
-});
+    // Dessiner les arêtes d'abord
+    for (const [key, value] of Object.entries(chemin)) {
+        const [xStart, yStart] = coord[key];
 
-// Activer le joueur après un clic
-canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    // Vérifier si le clic est sur le joueur
-    if (
-        mouseX >= player.x &&
-        mouseX <= player.x + player.size &&
-        mouseY >= player.y &&
-        mouseY <= player.y + player.size
-    ) {
-        playerActivated = true; // Activer le mouvement du joueur
-    } else {
-        // Si on clique ailleurs, on peut ajouter des sommets
-        vertices.push({ x: mouseX, y: mouseY, radius: 10, color: 'blue' });
-    }
-});
-
-// Tester les collisions
-function isCollision(rect, circle) {
-    const distX = Math.abs(circle.x - rect.x - rect.size / 2);
-    const distY = Math.abs(circle.y - rect.y - rect.size / 2);
-
-    if (distX > (rect.size / 2 + circle.radius) || distY > (rect.size / 2 + circle.radius)) {
-        return false;
-    }
-    if (distX <= (rect.size / 2) || distY <= (rect.size / 2)) {
-        return true;
-    }
-    const dx = distX - rect.size / 2;
-    const dy = distY - rect.size / 2;
-    return (dx * dx + dy * dy <= (circle.radius * circle.radius));
-}
-
-// Boucle principale
-function mainLoop() {
-    ctx.clearRect(0, 0, w, h);
-
-    // Dessiner l'image de fond
-    const img = new Image();
-    img.src = 'https://i.postimg.cc/d0h6W5vY/0fc248c7-2e0e-4272-b70d-5e095224b185.png';
-    ctx.drawImage(img, 0, 0, w, h);
-
-    // Dessiner les sommets
-    vertices.forEach((vertex, index) => {
-        drawCircle(vertex.x, vertex.y, vertex.radius, vertex.color);
-
-        // Vérifier les collisions avec le joueur
-        if (isCollision(player, vertex)) {
-            vertices.splice(index, 1); // Supprimer le sommet
+        for (const via in value) {
+            value[via].forEach(destination => {
+                const [xEnd, yEnd] = coord[destination];
+                ctx.beginPath();
+                ctx.moveTo(xStart, yStart);
+                ctx.lineTo(xEnd, yEnd);
+                ctx.stroke();
+            });
         }
-    });
+    }
 
-    // Dessiner le joueur
-    drawRectangle(player);
-
-    // Reboucler
-    requestAnimationFrame(mainLoop);
+    // Dessiner les sommets par-dessus les arêtes
+    for (const [key, value] of Object.entries(chemin)) {
+        const [xStart, yStart] = coord[key];
+        drawVertices(xStart, yStart, 20, key);
+    }
 }
 
-// Démarrer la boucle
-mainLoop();
+// Exemple d'utilisation
+let chemin = {
+    A: { '': ['B', 'C', 'E'] },
+    B: { 'A': ['C', 'D', 'F'], 'C': ['G'] },
+    C: { 'A': ['B'], 'B': ['F', 'H'], 'E': ['D'] },
+    D: { 'B': ['H'], 'C': ['G'] },
+    E: { 'A': ['F'], 'C': ['A', 'G'] },
+    F: { 'B': ['D', 'I'], 'E': ['H', 'J'] },
+    G: { 'C': ['I'], 'D': ['H'] },
+    H: { 'F': ['I', 'J'], 'G': ['B'] },
+    I: { 'G': ['J'], 'H': ['E'] },
+    J: { 'F': ['I'], 'I': ['G'] }
+};
+
+let nodeCoordinates = assignCoordinates();
+graph_rep(chemin, nodeCoordinates);
+function verif_sommet(table,depart,arrive){
+    for (const [key, value] of Object.entries(table[depart])) {
+          for(let e of value){
+              if(e==arrive){
+                  return 0;
+              }
+          }
+    }
+    return 1;
+}
+canvas.addEventListener('click', (e) => {
+    // Sommets de départ et d'arrivée
+    let s1 = 'A'; // Remplacez par le sommet initial si dynamique
+    let s2 = 'B'; // Remplacez par le sommet cible si dynamique
+
+    // Parcourir les sommets et vérifier si on a cliqué dessus
+    for (const [key, value] of Object.entries(nodeCoordinates)) {
+        const [xStart, yStart] = value;
+
+        // Vérifier si le clic est proche du sommet actuel
+        if (
+            (e.clientX < xStart + 20) &&
+            (e.clientX > xStart - 20) &&
+            (e.clientY < yStart + 20) &&
+            (e.clientY > yStart - 20)
+        ) {
+            // Si le sommet est cliqué, vérifier les critères
+            if (verif_sommet(chemin, s1, s2)) {
+                console.log(`Critères satisfaits pour le sommet ${key}`);
+                sommet_acces(chemin, key, nodeCoordinates); // Action si critères remplis
+            } else {
+                console.log(`Critères non satisfaits pour le sommet ${key}`);
+                // Action si critères non remplis (par exemple, changer `s1`)
+                s1 = key; // Mise à jour du sommet initial pour une nouvelle vérification
+            }
+            break; // On sort de la boucle une fois un sommet cliqué
+        }
+    }
+});
+
+
