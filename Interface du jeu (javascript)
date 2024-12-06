@@ -1,8 +1,9 @@
 // Fonction pour attribuer des coordonnées à chaque sommet
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-//let player = { x: 220, y: 440, size: 8, color: 'black' };
-//let playerActivated = false; // Contrôle si le joueur peut bouger
+var depart = 'A'; // Sommet de départ initial
+var arrivee = 'B'; // Sommet d'arrivée initial
+var graphVisible=false
 function assignCoordinates() {
     // Centrer les coordonnées dans un canvas de 1000x1000
     let coordinates = {
@@ -21,6 +22,37 @@ function assignCoordinates() {
     return coordinates;
 }
 
+function showGraph() {
+    if (!graphVisible) {
+        graphVisible = true; // Mettre à jour l'état
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Réinitialiser le canvas
+        graph_rep(chemin, nodeCoordinates); // Dessiner le graphe initial
+    }
+}
+
+// Fonction pour masquer le graphe
+function hideGraph() {
+    if (graphVisible) {
+        graphVisible = false; // Mettre à jour l'état
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+    }
+}
+
+// Gestionnaires d'événements pour les boutons
+document.getElementById('startButton').addEventListener('click', showGraph);
+document.getElementById('exitButton').addEventListener('click', hideGraph);
+
+
+// Fonction pour vérifier l'accessibilité entre deux sommets
+function is_acces(chemin, s1, s2) {
+    // Vérifier si le sommet s2 est accessible depuis s1
+    if (chemin[s1] && Object.keys(chemin[s1]).some(via => chemin[s1][via].includes(s2))) {
+        return true;
+    }
+    return false;
+}
+
+// Fonction pour dessiner le graphe avec le sommet de départ mis à jour
 function sommet_acces(chemin, sommet, coord) {
     // Réinitialiser le canvas avant de redessiner
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -39,43 +71,48 @@ function sommet_acces(chemin, sommet, coord) {
         }
     }
 
-    // Redessiner les sommets et marquer les accessibles
+    // Redessiner tous les sommets avec les couleurs appropriées
     for (const [key, value] of Object.entries(chemin)) {
         const [x, y] = coord[key];
-        if (key === sommet) {
-            // Mettre en surbrillance le sommet actuel
+
+        if (key === depart) {
+            // Dessiner le sommet de départ en bleu
+            drawVertices(x, y, 20, key, "blue");
+        } else if (key === sommet) {
+            // Dessiner le sommet actuel en jaune
             drawVertices(x, y, 20, key, "yellow");
         } else if (Object.keys(chemin[sommet]).some(via => chemin[sommet][via].includes(key))) {
-            // Colorer les sommets accessibles en vert
+            // Dessiner les sommets accessibles en vert
             drawVertices(x, y, 20, key, "green");
         } else {
-            // Redessiner les autres sommets normalement
+            // Dessiner les autres sommets en blanc
             drawVertices(x, y, 20, key, "white");
         }
     }
 }
 
-// Modifie drawVertices pour permettre des couleurs personnalisées
+// Fonction pour dessiner un sommet
 function drawVertices(x, y, radius, label, color = "white") {
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
+    ctx.arc(x, y, radius, 0, 2 * Math.PI); // Cercle du sommet
+    ctx.fillStyle = color; // Couleur du sommet
     ctx.fill();
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Dessiner le texte au centre du cercle
+    // Texte du sommet
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(label, x, y);
-}
 
+    // Ajouter des particules scintillantes
+
+}
 // Fonction pour représenter un graphe
 function graph_rep(chemin, coord) {
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-
     // Dessiner les arêtes d'abord
     for (const [key, value] of Object.entries(chemin)) {
         const [xStart, yStart] = coord[key];
@@ -94,9 +131,90 @@ function graph_rep(chemin, coord) {
     // Dessiner les sommets par-dessus les arêtes
     for (const [key, value] of Object.entries(chemin)) {
         const [xStart, yStart] = coord[key];
-        drawVertices(xStart, yStart, 20, key);
+        if (key === depart) {
+            // Dessiner le sommet de départ avec une couleur spéciale
+            drawVertices(xStart, yStart, 20, key, "blue");
+        } else {
+            // Dessiner les autres sommets avec la couleur par défaut (blanc)
+            drawVertices(xStart, yStart, 20, key, "white");
+        }
     }
 }
+
+
+function showTransitionTable(sommet, coord) {
+    graph_rep(chemin, coord); // Redessiner le graphe en arrière-plan
+
+    // Coordonnées du sommet pour positionner la table
+    const [x, y] = coord[sommet];
+
+    // Style de la boîte pour la table de transition
+    ctx.fillStyle = "rgba(30, 30, 30, 0.9)"; // Fond sombre et translucide
+    const boxWidth = 260;
+    const boxHeight = 120;
+    const boxX = x + 25; // Position décalée par rapport au sommet
+    const boxY = y - 70; // Position décalée vers le haut
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Ajouter une bordure lumineuse à la boîte
+    ctx.strokeStyle = "gold";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Afficher le titre de la table de transition
+    ctx.fillStyle = "white";
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText(`Transitions pour ${sommet}:`, boxX + 10, boxY + 10);
+
+    // Afficher les transitions dans la boîte
+    ctx.font = "12px Arial";
+    const transition = chemin[sommet];
+    let textY = boxY + 30; // Position initiale pour le texte des transitions
+
+    for (const [key, value] of Object.entries(transition)) {
+        const lineText = `${key} -> ${value.join(", ")}`;
+        ctx.fillText(lineText, boxX + 10, textY);
+        textY += 20; // Espacement entre les lignes
+    }
+}
+
+
+// Écouteur d'événements pour gérer le survol de la souris
+canvas.addEventListener('mousemove', (e) => { 
+    const mouseX = e.clientX - canvas.offsetLeft;
+    const mouseY = e.clientY - canvas.offsetTop;
+    let isHovering = false;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Réinitialise le canvas
+    graph_rep(chemin, nodeCoordinates); // Toujours redessiner le graphe
+
+    for (const [key, value] of Object.entries(nodeCoordinates)) {
+        const [x, y] = value;
+        const distance = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+
+        if (distance <= 20) { // Si le curseur est à l'intérieur du rayon du sommet
+            // Effet d'aura autour du sommet
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, 2 * Math.PI); // Cercle plus large pour l'aura
+            ctx.fillStyle = "rgba(255, 215, 0, 0.3)"; // Jaune translucide
+            ctx.fill();
+
+            // Mise en surbrillance du sommet
+            drawVertices(x, y, 20, key, "gold"); // Couleur dorée pour le sommet survolé
+
+            // Afficher la table de transition
+            showTransitionTable(key, nodeCoordinates);
+
+            isHovering = true;
+            break;
+        }
+    }
+
+    if (!isHovering) {
+        graph_rep(chemin, nodeCoordinates); // Redessiner le graphe si rien n'est survolé
+    }
+});
 
 // Exemple d'utilisation
 let chemin = {
@@ -112,46 +230,70 @@ let chemin = {
     J: { 'F': ['I'], 'I': ['G'] }
 };
 
+
+
+
+
+// Dessiner le graphe initial
 let nodeCoordinates = assignCoordinates();
 graph_rep(chemin, nodeCoordinates);
-function verif_sommet(table,depart,arrive){
-    for (const [key, value] of Object.entries(table[depart])) {
-          for(let e of value){
-              if(e==arrive){
-                  return 0;
-              }
-          }
-    }
-    return 1;
-}
 canvas.addEventListener('click', (e) => {
-    // Sommets de départ et d'arrivée
-    let s1 = 'A'; // Remplacez par le sommet initial si dynamique
-    let s2 = 'B'; // Remplacez par le sommet cible si dynamique
+    const mouseX = e.clientX - canvas.offsetLeft;
+    const mouseY = e.clientY - canvas.offsetTop;
 
-    // Parcourir les sommets et vérifier si on a cliqué dessus
     for (const [key, value] of Object.entries(nodeCoordinates)) {
-        const [xStart, yStart] = value;
+        const [x, y] = value;
+        const distance = Math.sqrt((mouseX - x) ** 2 + (mouseY - y + 20) ** 2);
 
-        // Vérifier si le clic est proche du sommet actuel
-        if (
-            (e.clientX < xStart + 20) &&
-            (e.clientX > xStart - 20) &&
-            (e.clientY < yStart + 20) &&
-            (e.clientY > yStart - 20)
-        ) {
-            // Si le sommet est cliqué, vérifier les critères
-            if (verif_sommet(chemin, s1, s2)) {
-                console.log(`Critères satisfaits pour le sommet ${key}`);
-                sommet_acces(chemin, key, nodeCoordinates); // Action si critères remplis
-            } else {
-                console.log(`Critères non satisfaits pour le sommet ${key}`);
-                // Action si critères non remplis (par exemple, changer `s1`)
-                s1 = key; // Mise à jour du sommet initial pour une nouvelle vérification
+        if (distance <= 20) { // Vérifie si le clic est dans le rayon du sommet (20 pixels)
+            // Vérifier si le sommet est accessible
+            if (is_acces(chemin, depart, key) && depart !== key) {
+                depart = key; // Mettre à jour le sommet de départ
+                sommet_acces(chemin, depart, nodeCoordinates);
+            } else if (depart === arrivee) {
+                // Gérer la victoire avec une animation et un effet de couleur
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Créer une animation de texte de félicitations
+                let alpha = 1; // Opacité initiale
+                let scale = 1; // Échelle initiale
+                let text = "Bravo!!!";
+
+                function animateVictory() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = `rgba(0, 128, 0, ${alpha})`; // Vert translucide pour l'arrière-plan
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.font = `${scale * 40}px 'Arial'`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`; // Texte en jaune
+
+                    // Dessiner le texte de félicitations avec animation
+                    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+                    // Modifier l'opacité et la taille pour l'animation
+                    alpha -= 0.02; // Réduire l'opacité
+                    scale += 0.02; // Augmenter l'échelle
+
+                    if (alpha <= 0) {
+                        clearInterval(victoryInterval); // Arrêter l'animation lorsque l'opacité atteint 0
+                    }
+                }
+
+                // Lancer l'animation de victoire
+                let victoryInterval = setInterval(animateVictory, 50);
+                return;
             }
-            break; // On sort de la boucle une fois un sommet cliqué
+
+            // Toujours redessiner le graphe après un clic
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            graph_rep(chemin, nodeCoordinates);
+            sommet_acces(chemin, key, nodeCoordinates);
+            break;
         }
     }
 });
+
 
 
