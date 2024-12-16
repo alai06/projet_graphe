@@ -1,9 +1,49 @@
+class Confetti {
+                    constructor(x, y) {
+                        this.x = x;
+                        this.y = y;
+                        this.size = Math.random() * 10 + 5;
+                        this.speedX = Math.random() * 2 - 1; // Vitesse horizontale
+                        this.speedY = Math.random() * 3 + 2; // Vitesse verticale
+                        this.color = `hsl(${Math.random() * 360}, 100%, 60%)`; // Couleur aléatoire
+                    }
+            
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        this.speedY += 0.1; // Gravité légère
+            
+                        // Réinitialiser les confettis en bas de l'écran
+                        if (this.y > canvas.height) {
+                            this.y = 0;
+                            this.x = Math.random() * canvas.width;
+                        }
+                    }
+            
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                    }
+                }
+
+
+
+
+
 // Fonction pour attribuer des coordonnées à chaque sommet
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 var depart = 'A'; // Sommet de départ initial
 var arrivee = 'B'; // Sommet d'arrivée initial
 var graphVisible=false
+var cheminsParcourus = [depart];
+var dernier_sommet='';
+var arete_chemin=[];
+var list_dernier_sommet=[''];
+let endIcon = new Image();
+endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
 function assignCoordinates() {
     // Centrer les coordonnées dans un canvas de 1000x1000
     let coordinates = {
@@ -23,41 +63,129 @@ function assignCoordinates() {
 }
 
 function showGraph() {
+    canvas.style.pointerEvents = 'auto';
     if (!graphVisible) {
         graphVisible = true; // Mettre à jour l'état
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Réinitialiser le canvas
-        graph_rep(chemin, nodeCoordinates); // Dessiner le graphe initial
     }
+    // Réinitialiser les valeurs du graphe
+    depart = 'A'; // Sommet de départ initial
+    arrivee = 'B'; // Sommet d'arrivée initial
+
+    // Réinitialiser le canvas et redessiner le graphe initial
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    graph_rep(chemin, nodeCoordinates); // Dessiner le graphe initial
+    cheminsParcourus = [depart];
+    dernier_sommet='';
+    list_dernier_sommet=[''];
+    arete_chemin=[];
 }
 
 // Fonction pour masquer le graphe
-function hideGraph() {
-    if (graphVisible) {
-        graphVisible = false; // Mettre à jour l'état
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
-    }
-}
 
+
+
+// Ajouter un gestionnaire d'événements pour le bouton d'annulation
+document.getElementById('undoButton')?.addEventListener('click', undoLastMove);
 // Gestionnaires d'événements pour les boutons
+document.getElementById('solutionButton').addEventListener('click', Afficher_solution);
 document.getElementById('startButton').addEventListener('click', showGraph);
-document.getElementById('exitButton').addEventListener('click', hideGraph);
+
 
 
 // Fonction pour vérifier l'accessibilité entre deux sommets
-function is_acces(chemin, s1, s2) {
+/*function is_acces(chemin, s1, s2) {
     // Vérifier si le sommet s2 est accessible depuis s1
     if (chemin[s1] && Object.keys(chemin[s1]).some(via => chemin[s1][via].includes(s2))) {
         return true;
     }
     return false;
+}*/
+
+
+// Fonction pour annuler le dernier coup
+function undoLastMove() {
+    if (cheminsParcourus.length > 0) {
+        // Supprimer le dernier chemin parcouru
+        cheminsParcourus.pop();
+        arete_chemin.pop();
+
+        // Réinitialiser le sommet de départ au précédent
+        depart = dernier_sommet;
+        list_dernier_sommet.pop();
+        dernier_sommet=list_dernier_sommet[list_dernier_sommet.length-1];
+
+        // Redessiner le graphe
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        graph_rep(chemin, nodeCoordinates);
+
+    }
+}
+
+function arete_rouge(s1, s2) {
+    const [xs1, ys1] = nodeCoordinates[s1];
+    const [xs2, ys2] = nodeCoordinates[s2];
+    arete_chemin.push([xs1, ys1, xs2, ys2]);
+}
+
+//fonction permettant de trouver le meilleur chemin du sommet de départ au sommet d'arrivée
+
+function trouverCheminAvecPredecesseurBFS(tableTransition, sommetDepart, sommetFinal) {
+    let queue = [{ sommet: sommetDepart, predecesseur: '', chemin: [sommetDepart], aretesVisitees: new Set() }];
+
+    let visite = new Set([sommetDepart + '_']);
+
+    while (queue.length > 0) {
+        let { sommet, predecesseur, chemin, aretesVisitees } = queue.shift();
+
+        // Si le sommet final est atteint, retourne le chemin sous forme de liste de sommets
+        if (sommet === sommetFinal) {
+            return chemin;
+        }
+
+        const transitionsPossibles = tableTransition[sommet][predecesseur] || [];
+        for (let voisin of transitionsPossibles) {
+            let arete = `${sommet}-${voisin}`;
+            
+            // Vérifie si l'arête n'a pas encore été visitée
+            if (!aretesVisitees.has(arete)) {
+                let nouvellesAretesVisitees = new Set(aretesVisitees);
+                nouvellesAretesVisitees.add(arete);
+
+                let cleVisite = voisin + '-' + sommet;
+                if (!visite.has(cleVisite)) {
+                    visite.add(cleVisite);
+
+                    queue.push({
+                        sommet: voisin,
+                        predecesseur: sommet,
+                        chemin: [...chemin, voisin], // Ajoute le sommet voisin au chemin
+                        aretesVisitees: nouvellesAretesVisitees 
+                    });
+                }
+            }
+        }
+    }
+
+    // Si aucun chemin n'est trouvé
+    return null;
+}
+
+
+function Afficher_solution(){
+    depart='A';
+    arrivee='B';
+    let solution=trouverCheminAvecPredecesseurBFS(chemin, depart, arrivee);
+    arete_chemin=[];
+    graph_rep(chemin, nodeCoordinates);
+    for (let i = 0; i < solution.length - 1; i++) {
+        arete_rouge(solution[i], solution[i + 1]);
+    }
+    graph_rep(chemin, nodeCoordinates);
 }
 
 // Fonction pour dessiner le graphe avec le sommet de départ mis à jour
 function sommet_acces(chemin, sommet, coord) {
-    // Réinitialiser le canvas avant de redessiner
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Redessiner toutes les arêtes
+    // Redessiner toutes les autres arêtes (en blanc ou toute autre couleur)
     for (const [key, value] of Object.entries(chemin)) {
         const [xStart, yStart] = coord[key];
         for (const via in value) {
@@ -66,22 +194,51 @@ function sommet_acces(chemin, sommet, coord) {
                 ctx.beginPath();
                 ctx.moveTo(xStart, yStart);
                 ctx.lineTo(xEnd, yEnd);
+                ctx.strokeStyle = "white"; // Couleur par défaut
+                ctx.lineWidth = 7;
                 ctx.stroke();
             });
         }
     }
 
+    for (let [xs1, ys1, xs2, ys2] of arete_chemin) {
+        ctx.beginPath();
+        ctx.moveTo(xs1, ys1);
+        ctx.lineTo(xs2, ys2);
+        ctx.strokeStyle = "red"; // Arêtes rouges
+        ctx.lineWidth = 7; // Vous pouvez ajuster la taille de la ligne selon vos besoins
+        ctx.stroke();
+    }
+    let double=doublons(arete_chemin);
+    for (let [xs1, ys1, xs2, ys2] of double) {
+        // Calculer le centre de l'arc de cercle
+        const midX = (xs1 + xs2) / 2; // Milieu des deux points
+        const midY = (ys1 + ys2) / 2;
+        
+        // Calculer un rayon pour l'arc (par exemple, la moitié de la distance entre les deux points)
+        const radius = Math.sqrt((xs2 - xs1) ** 2 + (ys2 - ys1) ** 2) / 2;
+    
+        // Calculer les angles pour l'arc (donc un arc d'un côté des points)
+        const angleStart = Math.atan2(ys1 - midY, xs1 - midX); // Angle entre le centre et le point de départ
+        const angleEnd = Math.atan2(ys2 - midY, xs2 - midX); // Angle entre le centre et le point de fin
+    
+        // Dessiner l'arc de cercle
+        ctx.beginPath();
+        ctx.arc(midX, midY, radius, angleStart, angleEnd, false); // false pour un arc dans le sens horaire
+        ctx.strokeStyle = "red"; // Arêtes rouges
+        ctx.lineWidth = 7; // Largeur des arêtes rouges
+        ctx.stroke();
+    }
     // Redessiner tous les sommets avec les couleurs appropriées
     for (const [key, value] of Object.entries(chemin)) {
         const [x, y] = coord[key];
-
         if (key === depart) {
             // Dessiner le sommet de départ en bleu
-            drawVertices(x, y, 20, key, "blue");
+            drawVertices(x, y, 20, key, "#1E88E5");
         } else if (key === sommet) {
             // Dessiner le sommet actuel en jaune
-            drawVertices(x, y, 20, key, "yellow");
-        } else if (Object.keys(chemin[sommet]).some(via => chemin[sommet][via].includes(key))) {
+            drawVertices(x, y, 20, key, "red");
+        } else if (checkSommetInChemin(chemin, sommet, dernier_sommet, key)) {
             // Dessiner les sommets accessibles en vert
             drawVertices(x, y, 20, key, "green");
         } else {
@@ -91,26 +248,58 @@ function sommet_acces(chemin, sommet, coord) {
     }
 }
 
-// Fonction pour dessiner un sommet
 function drawVertices(x, y, radius, label, color = "white") {
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI); // Cercle du sommet
     ctx.fillStyle = color; // Couleur du sommet
     ctx.fill();
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 7;
     ctx.stroke();
 
     // Texte du sommet
     ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
+    ctx.font = "bold 20px Roboto";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(label, x, y);
-
-    // Ajouter des particules scintillantes
-
 }
+
+
+function doublons(L) {
+    let D = [];  // Liste pour stocker les doublons inversés
+    let doublonsTrouves = [];  // Liste pour suivre les indices des arêtes déjà traitées (éviter les doublons exacts)
+
+    for (let i = 0; i < L.length; i++) {
+        let [x1, y1, x2, y2] = L[i];  // Arête actuelle
+        let doublonInverse = [x2, y2, x1, y1];  // Créer la version inversée de l'arête
+
+        // Vérifier si l'arête inversée existe déjà dans les arêtes précédentes
+        let estDoublonInverse = false;
+        for (let j = 0; j < i; j++) {  // Vérification uniquement avant l'index actuel (donc après)
+            // Comparer les arêtes, en tenant compte de l'ordre inverse
+            if (
+                (L[j][0] === doublonInverse[0] && L[j][1] === doublonInverse[1] && L[j][2] === doublonInverse[2] && L[j][3] === doublonInverse[3])
+            ) {
+                estDoublonInverse = true;
+                break; // Si doublon inversé trouvé, sortir de la boucle
+            }
+        }
+
+        // Si c'est un doublon inversé et que ce n'est pas un doublon exact
+        if (estDoublonInverse && !doublonsTrouves.includes(i) && !doublonsTrouves.includes(L.findIndex(el => el[0] === x1 && el[1] === y1 && el[2] === x2 && el[3] === y2))) {
+            D.push(L[i]);  // Ajouter l'arête inversée à la liste des doublons
+            doublonsTrouves.push(i);  // Marquer cet index comme trouvé
+        } else if (!doublonsTrouves.includes(i)) {
+            // Ajouter l'arête à doublonsTrouves si elle n'a pas été marquée (pour éviter les doublons exacts)
+            doublonsTrouves.push(i);
+        }
+    }
+
+    return D;
+}
+
+
 // Fonction pour représenter un graphe
 function graph_rep(chemin, coord) {
     // Dessiner les arêtes d'abord
@@ -123,23 +312,66 @@ function graph_rep(chemin, coord) {
                 ctx.beginPath();
                 ctx.moveTo(xStart, yStart);
                 ctx.lineTo(xEnd, yEnd);
+                ctx.strokeStyle = "white"; // Définir la couleur des arêtes en blanc
+                ctx.lineWidth = 7;         // Facultatif : régler l'épaisseur des lignes
                 ctx.stroke();
             });
         }
     }
-
+    for (let [xs1, ys1, xs2, ys2] of arete_chemin) {
+        ctx.beginPath();
+        ctx.moveTo(xs1, ys1);
+        ctx.lineTo(xs2, ys2);
+        ctx.strokeStyle = "red"; // Arêtes rouges
+        ctx.lineWidth = 7; // Largeur des arêtes rouges
+        ctx.stroke();
+    }
+    let double=doublons(arete_chemin);
+    for (let [xs1, ys1, xs2, ys2] of double) {
+        // Calculer le centre de l'arc de cercle
+        const midX = (xs1 + xs2) / 2; // Milieu des deux points
+        const midY = (ys1 + ys2) / 2;
+        
+        // Calculer un rayon pour l'arc (par exemple, la moitié de la distance entre les deux points)
+        const radius = Math.sqrt((xs2 - xs1) ** 2 + (ys2 - ys1) ** 2) / 2;
+    
+        // Calculer les angles pour l'arc (donc un arc d'un côté des points)
+        const angleStart = Math.atan2(ys1 - midY, xs1 - midX); // Angle entre le centre et le point de départ
+        const angleEnd = Math.atan2(ys2 - midY, xs2 - midX); // Angle entre le centre et le point de fin
+    
+        // Dessiner l'arc de cercle
+        ctx.beginPath();
+        ctx.arc(midX, midY, radius, angleStart, angleEnd, false); // false pour un arc dans le sens horaire
+        ctx.strokeStyle = "red"; // Arêtes rouges
+        ctx.lineWidth = 7; // Largeur des arêtes rouges
+        ctx.stroke();
+    }
+    
     // Dessiner les sommets par-dessus les arêtes
     for (const [key, value] of Object.entries(chemin)) {
         const [xStart, yStart] = coord[key];
         if (key === depart) {
             // Dessiner le sommet de départ avec une couleur spéciale
-            drawVertices(xStart, yStart, 20, key, "blue");
-        } else {
+            drawVertices(xStart, yStart, 20, key, "#1E88E5");
+        }
+        else if (key === arrivee) {
+            // Dessiner le sommet d'arrivée avec une couleur spéciale (blanc ou autre)
+            drawVertices(xStart, yStart, 20, key, "white");
+
+            // Vérifier si l'image est chargée avant de l'afficher
+            if (endIcon.complete) {
+                // Afficher l'image en dessous du sommet, de manière réduite
+                const iconSize = 15; // Taille réduite de l'icône
+                ctx.drawImage(endIcon, xStart - iconSize / 2, yStart-50, 40, 40);
+            }
+        } 
+        else {
             // Dessiner les autres sommets avec la couleur par défaut (blanc)
             drawVertices(xStart, yStart, 20, key, "white");
         }
     }
 }
+
 
 
 function showTransitionTable(sommet, coord) {
@@ -149,11 +381,14 @@ function showTransitionTable(sommet, coord) {
     const [x, y] = coord[sommet];
 
     // Style de la boîte pour la table de transition
-    ctx.fillStyle = "rgba(30, 30, 30, 0.9)"; // Fond sombre et translucide
+    ctx.fillStyle = "rgba(30, 30, 30, 0.6)"; // Fond sombre et translucide
     const boxWidth = 260;
     const boxHeight = 120;
+
+    // Ajouter une marge en haut de la boîte (par exemple 20px)
+    const marginTop = 20;
     const boxX = x + 25; // Position décalée par rapport au sommet
-    const boxY = y - 70; // Position décalée vers le haut
+    const boxY = y - 70 - marginTop; // Ajouter la marge en haut
     ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
 
     // Ajouter une bordure lumineuse à la boîte
@@ -163,14 +398,14 @@ function showTransitionTable(sommet, coord) {
 
     // Afficher le titre de la table de transition
     ctx.fillStyle = "white";
-    ctx.font = "bold 14px Arial";
+    ctx.font = "bold 20px Roboto";
     ctx.textAlign = "left";
-    ctx.fillText(`Transitions pour ${sommet}:`, boxX + 10, boxY + 10);
+    ctx.fillText(`Transitions pour ${sommet}:`, boxX + 10, boxY + 20);
 
     // Afficher les transitions dans la boîte
-    ctx.font = "12px Arial";
+    ctx.font = "18px Roboto";
     const transition = chemin[sommet];
-    let textY = boxY + 30; // Position initiale pour le texte des transitions
+    let textY = boxY + 40; // Position initiale pour le texte des transitions
 
     for (const [key, value] of Object.entries(transition)) {
         const lineText = `${key} -> ${value.join(", ")}`;
@@ -180,15 +415,47 @@ function showTransitionTable(sommet, coord) {
 }
 
 
+
+// Écouteur d'événements pour gérer le survol de la souris
+canvas.addEventListener('mousemove', (e) => {
+    const mouseX = e.clientX - canvas.offsetLeft;
+    const mouseY = e.clientY - canvas.offsetTop;
+    let isHovering = false;
+
+    // 1. Redessiner le graphe une fois
+    /*ctx.clearRect(0, 0, canvas.width, canvas.height); // Efface tout le canvas
+    graph_rep(chemin, nodeCoordinates); // Redessine les arêtes et sommets*/
+
+    // 2. Vérifier le survol des sommets
+    for (const [key, value] of Object.entries(nodeCoordinates)) {
+        const [x, y] = value;
+        const distance = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+
+        if (distance <= 20) {
+            // Ajouter un effet de surbrillance au sommet
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, 2 * Math.PI); // Aura autour du sommet
+            ctx.fillStyle = "rgba(255, 215, 0, 0.3)"; // Jaune translucide
+            ctx.fill();
+
+            drawVertices(x, y, 20, key, "gold"); // Redessiner le sommet en doré
+            showTransitionTable(key, nodeCoordinates); // Afficher la table de transition
+            isHovering = true;
+            break; // Pas besoin de continuer si un sommet est survolé
+        }
+    }
+});
+
+
+
 // Écouteur d'événements pour gérer le survol de la souris
 canvas.addEventListener('mousemove', (e) => { 
     const mouseX = e.clientX - canvas.offsetLeft;
     const mouseY = e.clientY - canvas.offsetTop;
     let isHovering = false;
-
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Réinitialise le canvas
     graph_rep(chemin, nodeCoordinates); // Toujours redessiner le graphe
-
     for (const [key, value] of Object.entries(nodeCoordinates)) {
         const [x, y] = value;
         const distance = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
@@ -218,20 +485,29 @@ canvas.addEventListener('mousemove', (e) => {
 
 // Exemple d'utilisation
 let chemin = {
-    A: { '': ['B', 'C', 'E'] },
-    B: { 'A': ['C', 'D', 'F'], 'C': ['G'] },
-    C: { 'A': ['B'], 'B': ['F', 'H'], 'E': ['D'] },
-    D: { 'B': ['H'], 'C': ['G'] },
-    E: { 'A': ['F'], 'C': ['A', 'G'] },
-    F: { 'B': ['D', 'I'], 'E': ['H', 'J'] },
-    G: { 'C': ['I'], 'D': ['H'] },
-    H: { 'F': ['I', 'J'], 'G': ['B'] },
-    I: { 'G': ['J'], 'H': ['E'] },
-    J: { 'F': ['I'], 'I': ['G'] }
+    A: { '': ['C'] },
+    C: { 'A': ['D'],'E':['B','A'] },
+    D: { 'C': ['E'] },
+    E: { 'D': ['C'] },
+    B: { 'E': [] }
 };
 
 
 
+
+function checkSommetInChemin(chemin, cle1, cle2, sommet) {
+    // Vérifier si cle1 existe dans le dictionnaire chemin
+    if (chemin[cle1]&&cle1!==arrivee) {
+        // Vérifier si cle2 existe sous cle1
+        if (chemin[cle1][cle2]) {
+            // Vérifier si le sommet est présent dans le tableau chemin[cle1][cle2]
+            if (chemin[cle1][cle2].includes(sommet)) {
+                return true; // Le sommet est présent dans le chemin
+            }
+        }
+    }
+    return false; // Le sommet n'est pas dans le chemin
+}
 
 
 // Dessiner le graphe initial
@@ -245,48 +521,80 @@ canvas.addEventListener('click', (e) => {
         const [x, y] = value;
         const distance = Math.sqrt((mouseX - x) ** 2 + (mouseY - y + 20) ** 2);
 
-        if (distance <= 20) { // Vérifie si le clic est dans le rayon du sommet (20 pixels)
+        if (distance <= 40) { // Vérifie si le clic est dans le rayon du sommet (20 pixels)
             // Vérifier si le sommet est accessible
-            if (is_acces(chemin, depart, key) && depart !== key) {
+            if (checkSommetInChemin(chemin, depart,dernier_sommet,key) && depart !== key) {
+                dernier_sommet = depart;
+                list_dernier_sommet.push(dernier_sommet);
                 depart = key; // Mettre à jour le sommet de départ
+                cheminsParcourus.push(depart);
+                arete_rouge(depart,dernier_sommet);
                 sommet_acces(chemin, depart, nodeCoordinates);
             } else if (depart === arrivee) {
-                // Gérer la victoire avec une animation et un effet de couleur
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Créer une animation de texte de félicitations
+                canvas.style.pointerEvents = 'none'; // Désactive les événements de la souris
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Efface l'écran
+            
+                // Paramètres de l'animation
                 let alpha = 1; // Opacité initiale
                 let scale = 1; // Échelle initiale
-                let text = "Bravo!!!";
-
+                let text = "Bravo!!!"; // Texte de félicitations
+                let angle = 0; // Angle de rotation pour le texte
+                let confettiCount = 100; // Nombre de confettis
+                let confettiArray = []; // Tableau pour les confettis
+                // Créer les confettis
+                for (let i = 0; i < confettiCount; i++) {
+                    confettiArray.push(new Confetti(Math.random() * canvas.width, Math.random() * canvas.height));
+                }
+            
+                // Animation de victoire
+                let victoryAnimating = true;
+            
                 function animateVictory() {
+                    if (!victoryAnimating) return;
+            
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+                    // Dessiner l'arrière-plan avec une couleur changeante
                     ctx.fillStyle = `rgba(0, 128, 0, ${alpha})`; // Vert translucide pour l'arrière-plan
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            
+                    // Animer les confettis
+                    confettiArray.forEach(confetti => {
+                        confetti.update();
+                        confetti.draw();
+                    });
+            
+                    // Animer le texte "Bravo!!!"
+                    ctx.save();
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate(angle); // Faire tourner le texte
                     ctx.font = `${scale * 40}px 'Arial'`;
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`; // Texte en jaune
-
-                    // Dessiner le texte de félicitations avec animation
-                    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-                    // Modifier l'opacité et la taille pour l'animation
-                    alpha -= 0.02; // Réduire l'opacité
-                    scale += 0.02; // Augmenter l'échelle
-
+                    ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`; // Texte en jaune avec opacité
+            
+                    // Dessiner le texte avec une animation de rotation
+                    ctx.fillText(text, 0, 0);
+                    ctx.restore();
+            
+                    // Modifier l'opacité et la taille du texte pour l'animation
+                    alpha -= 0.01; // Réduire l'opacité
+                    scale += 0.05; // Augmenter l'échelle
+                    angle += 0.1; // Rotation continue
+            
+                    // Réduire la vitesse d'animation pour un effet plus fluide
                     if (alpha <= 0) {
-                        clearInterval(victoryInterval); // Arrêter l'animation lorsque l'opacité atteint 0
+                        victoryAnimating = false; // Arrêter l'animation lorsque l'opacité atteint 0
                     }
                 }
-
+            
                 // Lancer l'animation de victoire
-                let victoryInterval = setInterval(animateVictory, 50);
-                return;
+                let victoryInterval = setInterval(animateVictory, 30);
+                return; // Sortir immédiatement pour éviter de redessiner le graphique après l'animation
             }
+            
 
-            // Toujours redessiner le graphe après un clic
+            // Toujours redessiner le graphe après un clic si ce n'est pas la victoire
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             graph_rep(chemin, nodeCoordinates);
             sommet_acces(chemin, key, nodeCoordinates);
@@ -294,6 +602,3 @@ canvas.addEventListener('click', (e) => {
         }
     }
 });
-
-
-
