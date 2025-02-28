@@ -1,0 +1,56 @@
+body { 
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+canvas {
+    display: block;
+    margin: 20px auto;
+    border: 1px solid black;
+}
+.bouton {
+    display: block;
+    background-color: #719fee;
+    border-radius: 10px;
+    border: 4px double #1f69ec;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px;
+    width: 200px;
+    margin: 20px auto; /* Centrage horizontal automatique */
+    cursor: pointer;
+}
+.bouton:hover {
+    background-color: #5a88d6;
+}
+
+
+#undoButton {
+    background-color: #ff4d4d; /* Rouge doux */
+    color: white; /* Couleur du texte */
+    border: none; /* Pas de bordure */
+    border-radius: 8px; /* Coins arrondis */
+    padding: 10px 20px; /* Espacement interne */
+    font-size: 16px; /* Taille du texte */
+    font-weight: bold; /* Texte en gras */
+    cursor: pointer; /* Curseur de pointeur au survol */
+    transition: all 0.3s ease; /* Animation douce */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  }
+  
+  #undoButton:hover {
+    background-color: #e60000; /* Rouge plus intense au survol */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Ombre plus forte */
+  }
+  
+  #undoButton:active {
+    transform: translateY(2px); /* Légère pression visuelle */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Réduction de l'ombre */
+  }
+  
+  #undoButton:focus {
+    outline: 2px solid #ff8080; /* Contour pour l'accessibilité */
+    outline-offset: 2px;
+  }
+  
