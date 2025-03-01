@@ -48,6 +48,7 @@ var compteur=0;
 var liste_couleur_sol=[];
 var sommet_accessible=[];
 var taille_arete=0;
+var couleur_edge = ["red", "blue", "green", "yellow", "purple", "orange"];
 endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
     // Centrer les coordonnées dans un canvas de 1000x1000
     let coordinates1 = {
@@ -77,6 +78,63 @@ endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
         I: [ 535.5059172551331, 169.17779037379592 ],
         J: [ 575.2225502949178, -482.08358250697887 ]
       }
+
+      let chemin3 = {
+        A: { '': ['B', 'C', 'D'] },
+        B: { 'A': ['E', 'F'] },
+        C: { 'A': ['G', 'H'] },
+        D: { 'A': ['I', 'J'] },
+        E: { 'B': ['K', 'L'] },
+        F: { 'B': ['M'] },
+        G: { 'C': ['N', 'O'] },
+        H: { 'C': ['P', 'Q'] },
+        I: { 'D': ['R'] },
+        J: { 'D': ['S', 'T'] },
+        K: { 'E': ['U'] },
+        L: { 'E': ['V'] },
+        M: { 'F': ['W'] },
+        N: { 'G': ['X'] },
+        O: { 'G': ['Y'] },
+        P: { 'H': ['Z'] },
+        Q: { 'H': ['AA'] },
+        R: { 'I': ['BB'] },
+        S: { 'J': ['CC'] },
+        T: { 'J': ['DD'] }
+    };
+    
+    let coordinates3 = {
+        A: [600, 400],
+        B: [500, 300],
+        C: [700, 300],
+        D: [600, 500],
+        E: [400, 200],
+        F: [500, 150],
+        G: [800, 200],
+        H: [700, 150],
+        I: [500, 600],
+        J: [700, 600],
+        K: [350, 100],
+        L: [450, 100],
+        M: [500, 50],
+        N: [850, 100],
+        O: [750, 100],
+        P: [700, 50],
+        Q: [650, 50],
+        R: [450, 700],
+        S: [650, 700],
+        T: [750, 700],
+        U: [300, 50],
+        V: [400, 50],
+        W: [450, 10],
+        X: [900, 50],
+        Y: [800, 50],
+        Z: [750, 10],
+        AA: [700, 10],
+        BB: [400, 750],
+        CC: [600, 750],
+        DD: [700, 750]
+    };
+    
 
 function height_edge(chemin){
     for (const [key, value] of Object.entries(chemin)){
@@ -137,8 +195,8 @@ function choix_chemin() {
     btn2.textContent = "Choix 2 : Chemin 2";
     btn2.className = "button choice";
     btn2.addEventListener('click', function () {
-        chemin = chemin2;
-        nodeCoordinates=coordinates2;
+        chemin = chemin3;
+        nodeCoordinates=coordinates3;
         container.innerHTML = "";
         graph_rep(chemin, coordinates);
 
@@ -264,23 +322,63 @@ function Afficher_solution(){
     graph_rep(chemin, nodeCoordinates);
 }
 
-// Fonction pour dessiner le graphe avec le sommet de départ mis à jour
-function sommet_acces(chemin, sommet, coord) {
-    // Redessiner toutes les autres arêtes (en blanc ou toute autre couleur)
+function algo_ce(chemin){
+    let couleur=[];
     for (const [key, value] of Object.entries(chemin)) {
+        for (const via in value) {
+            value[via].forEach(destination => {
+                couleur.push([key,destination]);
+            });
+        }
+    }
+    return couleur;
+}
+
+function dessinerAretes(chemin, coord, couleur = "white", largeur = 15) {
+    let arêtesDessinées = new Set();
+
+    for (const [key, value] of Object.entries(chemin)) {
+        let couleurIndex = 0; // Réinitialiser couleurIndex pour chaque sommet
         const [xStart, yStart] = coord[key];
         for (const via in value) {
             value[via].forEach(destination => {
                 const [xEnd, yEnd] = coord[destination];
+                const part1X = xStart + (xEnd - xStart) / 5;
+                const part1Y = yStart + (yEnd - yStart) / 5;
+                const arête = `${key}-${destination}`;
+
+                if (!arêtesDessinées.has(arête)) {
+                    // Dessiner toute l'arête en blanc
+                    ctx.beginPath();
+                    ctx.moveTo(xStart, yStart);
+                    ctx.lineTo(xEnd, yEnd);
+                    ctx.strokeStyle = couleur;
+                    ctx.lineWidth = largeur;
+                    ctx.stroke();
+
+                    arêtesDessinées.add(arête);
+                }
+
+                // Vérifier si l'arête est accessible
+                let accessible = checkSommetInChemin(chemin, key, via, destination);
+
+                // Dessiner le premier cinquième de l'arête avec une couleur différente si accessible
                 ctx.beginPath();
                 ctx.moveTo(xStart, yStart);
-                ctx.lineTo(xEnd, yEnd);
-                ctx.strokeStyle = "white"; // Couleur par défaut
-                ctx.lineWidth = 15;
+                ctx.lineTo(part1X, part1Y);
+                ctx.strokeStyle = accessible ? couleur_edge[couleurIndex % couleur_edge.length] : "gray";
+                ctx.lineWidth = largeur;
                 ctx.stroke();
+
+                couleurIndex++;
             });
         }
     }
+}
+
+// Fonction pour dessiner le graphe avec le sommet de départ mis à jour
+function sommet_acces(chemin, sommet, coord) {
+    dessinerAretes(chemin, coord, couleur = "white", largeur = 15);
     for (let i = 0; i < arete_chemin.length; i++) {
         let [xs1, ys1, xs2, ys2] = arete_chemin[i]; // Déstructuration de l'arête
         ctx.beginPath();
@@ -396,21 +494,7 @@ function doublons(L) {
 
 
 function graph_rep(chemin, coord) {
-    for (const [key, value] of Object.entries(chemin)) {
-        const [xStart, yStart] = coord[key];
-
-        for (const via in value) {
-            value[via].forEach(destination => {
-                const [xEnd, yEnd] = coord[destination];
-                ctx.beginPath();
-                ctx.moveTo(xStart, yStart);
-                ctx.lineTo(xEnd, yEnd);
-                ctx.strokeStyle = "white"; 
-                ctx.lineWidth = 15;         
-                ctx.stroke();
-            });
-        }
-    }
+    dessinerAretes(chemin, coord, couleur = "white", largeur = 15);
     for (let [xs1, ys1, xs2, ys2] of arete_chemin) {
         ctx.beginPath();
         ctx.moveTo(xs1, ys1);
@@ -527,7 +611,7 @@ canvas.addEventListener('mousemove', (e) => {
 // Exemple d'utilisation
 let chemin1 = {
     A: { '': ['C'] },
-    C: { 'A': ['D'],'E':['B','A'] },
+    C: { 'A': ['D','E'],'E':['B','A'] },
     D: { 'C': ['E'] },
     E: { 'D': ['C'] },
     B: { 'E': [] }
@@ -536,7 +620,7 @@ let chemin1 = {
 let chemin2={
     A: { '': ['B', 'E', 'C'] },
     B: { 'A': ['C', 'F'] },
-    C: { 'A': ['D', 'H'], 'B': ['D'] },
+    C: { 'A': ['D', 'E'], 'B': ['D'] },
     D: { 'C': ['H'] },
     E: { 'A': ['F'] },
     F: { 'B': ['G'], 'E': ['G'] },
@@ -567,8 +651,8 @@ function checkSommetInChemin(chemin, cle1, cle2, sommet) {
 
 
 // Dessiner le graphe initial
-var chemin=chemin1;
-var nodeCoordinates = coordinates1;
+var chemin=chemin3;
+var nodeCoordinates = coordinates3;
 soustraireUnRGB(25);
 /*graph_rep(chemin, nodeCoordinates);*/
 document.getElementById('choiceButton').addEventListener('click', choix_chemin);
