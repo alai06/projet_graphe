@@ -48,7 +48,7 @@ var compteur=0;
 var liste_couleur_sol=[];
 var sommet_accessible=[];
 var taille_arete=0;
-var couleur_edge = ["red", "blue", "green", "yellow", "purple", "orange"];
+var couleur_edge = ["red", "blue"];
 endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
     // Centrer les coordonnées dans un canvas de 1000x1000
     let coordinates1 = {
@@ -333,18 +333,47 @@ function algo_ce(chemin){
     }
     return couleur;
 }
+function assignColors(chemin) {
+    let edgeColors = {}; // Stocker les couleurs des arêtes déjà assignées
+    let index = 0;
+    let coloredEdges = {};
+
+    for (let sommet in chemin) {
+        coloredEdges[sommet] = {};
+        for (let prev in chemin[sommet]) {
+            coloredEdges[sommet][prev] = [];
+            
+            chemin[sommet][prev].forEach(dest => {
+                if (!edgeColors[`${prev}-${dest}`]) {
+                    let color1 = couleur_edge[index % couleur_edge.length];
+                    let color2 = couleur_edge[(index + 1) % couleur_edge.length];
+                    index++;
+
+                    edgeColors[`${prev}-${dest}`] = [color1, color2];
+                    edgeColors[`${dest}-${prev}`] = [color2, color1];
+                }
+                
+                let [color1, color2] = edgeColors[`${prev}-${dest}`];
+                coloredEdges[sommet][prev].push([dest, color1, "white", color2]);
+            });
+        }
+    }
+    return coloredEdges;
+}
 
 function dessinerAretes(chemin, coord, couleur = "white", largeur = 15) {
     let arêtesDessinées = new Set();
-
+    let groupe = 0;
+    // Dessiner toutes les arêtes en blanc d'abord
     for (const [key, value] of Object.entries(chemin)) {
-        let couleurIndex = 0; // Réinitialiser couleurIndex pour chaque sommet
         const [xStart, yStart] = coord[key];
         for (const via in value) {
-            value[via].forEach(destination => {
+            value[via].forEach((destination, index) => {
                 const [xEnd, yEnd] = coord[destination];
                 const part1X = xStart + (xEnd - xStart) / 5;
                 const part1Y = yStart + (yEnd - yStart) / 5;
+                const part2X = xStart + 4 * (xEnd - xStart) / 5;
+                const part2Y = yStart + 4 * (yEnd - yStart) / 5;
                 const arête = `${key}-${destination}`;
 
                 if (!arêtesDessinées.has(arête)) {
@@ -352,26 +381,44 @@ function dessinerAretes(chemin, coord, couleur = "white", largeur = 15) {
                     ctx.beginPath();
                     ctx.moveTo(xStart, yStart);
                     ctx.lineTo(xEnd, yEnd);
-                    ctx.strokeStyle = couleur;
-                    ctx.lineWidth = largeur;
+                    ctx.strokeStyle = "white";
+                    ctx.lineWidth = largeur - 5; // Largeur plus petite pour les arêtes blanches
                     ctx.stroke();
 
                     arêtesDessinées.add(arête);
                 }
-
-                // Vérifier si l'arête est accessible
-                let accessible = checkSommetInChemin(chemin, key, via, destination);
-
-                // Dessiner le premier cinquième de l'arête avec une couleur différente si accessible
-                ctx.beginPath();
-                ctx.moveTo(xStart, yStart);
-                ctx.lineTo(part1X, part1Y);
-                ctx.strokeStyle = accessible ? couleur_edge[couleurIndex % couleur_edge.length] : "gray";
-                ctx.lineWidth = largeur;
-                ctx.stroke();
-
-                couleurIndex++;
             });
+        }
+    }
+
+    // Dessiner les arêtes colorées par-dessus
+    arêtesDessinées.clear(); // Réinitialiser le set pour redessiner les arêtes colorées
+    for (const [key, value] of Object.entries(chemin)) {
+            if(!value['']){
+            const [xStart, yStart] = coord[key];
+            for (const via in value) {
+                value[via].forEach((destination, index) => {
+                    const [xEnd, yEnd] = coord[destination];
+                    const part1X = xStart + (xEnd - xStart) / 5;
+                    const part1Y = yStart + (yEnd - yStart) / 5;
+                    const part2X = xStart + 4 * (xEnd - xStart) / 5;
+                    const part2Y = yStart + 4 * (yEnd - yStart) / 5;
+                    const arête = `${key}-${destination}`;
+
+                    if (!arêtesDessinées.has(arête)) {
+                        // Dessiner le premier cinquième de l'arête en couleur
+                        ctx.beginPath();
+                        ctx.moveTo(xStart, yStart);
+                        ctx.lineTo(part1X, part1Y);
+                        ctx.strokeStyle = couleur_edge[groupe];
+                        ctx.lineWidth = largeur;
+                        ctx.stroke();
+
+                        arêtesDessinées.add(arête);
+                    }
+                });
+                groupe=(groupe+1)%2;
+            }
         }
     }
 }
@@ -651,7 +698,7 @@ function checkSommetInChemin(chemin, cle1, cle2, sommet) {
 
 
 // Dessiner le graphe initial
-var chemin=chemin3;
+var chemin=chemin2;
 var nodeCoordinates = coordinates3;
 soustraireUnRGB(25);
 /*graph_rep(chemin, nodeCoordinates);*/
