@@ -48,7 +48,7 @@ var compteur=0;
 var liste_couleur_sol=[];
 var sommet_accessible=[];
 var taille_arete=0;
-var couleur_edge = ["red", "blue"];
+var couleur_edge = ["red", "blue", "green", "purple", "orange", "brown", "cyan", "magenta", "yellow", "pink"];
 endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
     // Centrer les coordonnées dans un canvas de 1000x1000
     let coordinates1 = {
@@ -361,6 +361,81 @@ function assignColors(chemin) {
     return coloredEdges;
 }
 
+function colorierAretes(chemin) {
+    // On initialise une structure pour garder les arêtes colorées
+    let arêtesColorées = [];
+    let couleurCourante = 0;  // Compteur pour les couleurs
+    let couleurs = {};  // Pour stocker les arêtes déjà colorées
+    let exploré = {};  // Pour éviter de réexplorer les mêmes sommets
+
+    // Fonction récursive pour explorer les sommets et colorier les arêtes
+    function explorer(sommet, couleur) {
+        if (exploré[sommet]) return;  // Si le sommet est déjà exploré, on arrête
+
+        exploré[sommet] = true;  // On marque le sommet comme exploré
+
+        // On parcourt les arêtes sortantes de ce sommet
+        for (let origine in chemin[sommet]) {
+            for (let destination of chemin[sommet][origine]) {
+                // Créer une arête unique (origine, destination)
+                let arête = (sommet < destination) ? `${sommet}->${destination}` : `${destination}->${sommet}`;
+
+                // Vérifier si l'arête a déjà été colorée
+                if (!couleurs[arête]) {
+                    couleurs[arête] = couleur;  // On attribue la couleur à cette arête
+                    // On ajoute cette arête à la bonne couleur dans la liste des arêtes colorées
+                    if (!arêtesColorées[couleur]) {
+                        arêtesColorées[couleur] = [];
+                    }
+                    arêtesColorées[couleur].push(arête);
+                }
+
+                // On poursuit l'exploration en utilisant la couleur courante
+                explorer(destination, couleur);
+            }
+        }
+    }
+
+    // On explore tous les sommets à partir de chaque sommet non exploré
+    for (let sommet in chemin) {
+        if (!exploré[sommet]) {
+            explorer(sommet, couleurCourante);  // On lance l'exploration d'un sommet
+            couleurCourante++;  // On passe à la couleur suivante
+        }
+    }
+
+    return arêtesColorées;
+}
+
+function couleur_possible(chemin, sommetDepart, exploré = {}) {
+    let arêtesSuccessives = {};
+
+    // Explorer les voisins directs du sommet courant
+    for (let origine in chemin[sommetDepart]) {
+        for (let destination of chemin[sommetDepart][origine]) {
+            if (!arêtesSuccessives[destination]) {
+                arêtesSuccessives[destination] = new Set(); // Utiliser un Set pour éviter les doublons
+            }
+
+            if (chemin[destination]) {
+                for (let destination2 in chemin[destination]) {
+                    for (let destination3 of chemin[destination][destination2]) {
+                        let arête = `${destination}-${destination3}`;
+                        arêtesSuccessives[destination].add(arête);
+                    }
+                }
+            }
+        }
+    }
+
+    // Convertir les Sets en tableaux
+    for (let key in arêtesSuccessives) {
+        arêtesSuccessives[key] = [...arêtesSuccessives[key]];
+    }
+
+    return arêtesSuccessives;
+}
+
 function dessinerAretes(chemin, coord, couleur = "white", largeur = 15) {
     let arêtesDessinées = new Set();
     let groupe = 0;
@@ -393,6 +468,7 @@ function dessinerAretes(chemin, coord, couleur = "white", largeur = 15) {
 
     // Dessiner les arêtes colorées par-dessus
     arêtesDessinées.clear(); // Réinitialiser le set pour redessiner les arêtes colorées
+    let arêtesColorées = couleur_possible(chemin);
     for (const [key, value] of Object.entries(chemin)) {
             if(!value['']){
             const [xStart, yStart] = coord[key];
@@ -659,22 +735,17 @@ canvas.addEventListener('mousemove', (e) => {
 let chemin1 = {
     A: { '': ['C'] },
     C: { 'A': ['D','E'],'E':['B','A'] },
-    D: { 'C': ['E'] },
-    E: { 'D': ['C'] },
+    D: { 'C': ['E'],'E':['C'] },
+    E: { 'D': ['C'], 'C': ['D'] },
     B: { 'E': [] }
 };
 
-let chemin2={
-    A: { '': ['B', 'E', 'C'] },
-    B: { 'A': ['C', 'F'] },
-    C: { 'A': ['D', 'E'], 'B': ['D'] },
-    D: { 'C': ['H'] },
-    E: { 'A': ['F'] },
-    F: { 'B': ['G'], 'E': ['G'] },
-    G: { 'F': ['H', 'J'] },
-    H: { 'C': ['I'], 'G': ['I'] },
-    I: { 'H': ['J'] },
-    J: { 'I': [] }
+let chemin2 = {
+    A: { '': ['C', 'D', 'B'] },
+    B: { 'A': ['E', 'C', 'D'], 'C': ['A', 'E', 'D'] },
+    C: { 'A': ['E', 'B', 'D'], 'B': ['A', 'E', 'D'], 'E': ['A', 'B', 'D'] },
+    D: { 'C': ['A', 'B', 'E'], 'E': ['A', 'C', 'B'], 'A': ['C', 'E', 'B'] },
+    E: { 'D': ['A', 'C', 'B'], 'C': ['A', 'B', 'D'], 'B': ['A', 'C', 'D'] }
 };
 
 
