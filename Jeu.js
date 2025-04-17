@@ -135,6 +135,8 @@ endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
         DD: [700, 750]
     };
 
+        // Ajoutez les autres sommets ici en suivant le même format 
+    
     let t3 =  {
         'A': {
             '': ['a1', 'a3', 'a4'],
@@ -733,9 +735,144 @@ endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
             'a112': ['a114'],
             'a114': ['a112','a116'],
             'a116': ['a114']
+        },
+        'a119': {
+            'a6': ['a53'],
+            'a53': ['a6','a32'],
+            'a32': ['a53']
+        },
+        'a120': {
+            'a89': ['a97','a67'],
+            'a67': ['a89'],
+            'a97': ['a89']
         }
+
     };
 
+    let t3_b =  {
+        A: [ ['a1',"tout_droit"], ['a3',"gauche"], ['a4',"tout_droit"] ],
+        a1: [ 'A', 'a2', 'a19' ],
+        a2: [ 'a1', 'a3', 'a5' ],
+        a3: [ 'A', 'a2', 'a8' ],
+        a4: [ 'A', 'a9', 'a10' ],
+        a5: [ 'a2', 'a6', 'a7' ],
+        a6: [ 'a5', 'a10', 'a11' ],
+        a7: [ 'a5', 'a12', 'a11' ],
+        a8: [ 'a3', 'a9', 'a13' ],
+        a9: [ 'a4', 'a8', 'a14' ],
+        a10: [ 'a4', 'a16', 'a13' ],
+        a11: [ 'a6', 'a7', 'a18' ],
+        a12: [ 'a7', 'a19', 'a20' ],
+        a13: [ 'a8', 'a21', 'a22' ],
+        a14: [ 'a9', 'a15', 'a23' ],
+        a15: [ 'a14', 'a16', 'a24' ],
+        a16: [ 'a10', 'a15', 'a25' ],
+        a17: [ 'a10', 'a25', 'a26' ],
+        a18: [ 'a11', 'a20', 'a27' ],
+        a19: [ 'a1', 'a12', 'a26' ],
+        a20: [ 'a12', 'a18', 'a28' ],
+        a21: [ 'a13', 'a29', 'a30' ],
+        a22: [ 'a13', 'a31', 'a32' ],
+        a23: [ 'a14', 'a33', 'a34' ],
+        a24: [ 'a15', 'a35', 'a36' ],
+        a25: [ 'a16', 'a17', 'a37' ],
+        a26: [ 'a17', 'a19', 'a38' ],
+        a27: [ 'a18', 'a28', 'a39' ],
+        a28: [ 'a20', 'a27', 'a38' ],
+        a29: [ 'a21', 'a31', 'a40' ],
+        a30: [ 'a21', 'a40', 'a41' ],
+        a31: [ 'a22', 'a29', 'a42' ],
+        a32: [ 'a10', 'a22', 'a43' ],
+        a33: [ 'a23', 'a44', 'a45' ],
+        a34: [ 'a23', 'a45', 'a46' ],
+        a35: [ 'a46', 'a24', 'a68' ],
+        a36: [ 'a24', 'a47', 'a48' ],
+        a37: [ 'a25', 'a48', 'a49' ],
+        a38: [ 'a26', 'a28', 'a49' ],
+        a39: [ 'a27', 'a48', 'a49' ],
+        a40: [ 'a29', 'a30', 'a50' ],
+        a41: [ 'a30', 'a51', 'a52' ],
+        a42: [ 'a54', 'a31', 'a89' ],
+        a43: [ 'a32', 'a53', 'a54' ],
+        a44: [ 'a33', 'a55', 'a56' ],
+        a45: [ 'a33', 'a34', 'a57' ],
+        a46: [ 'a34', 'a35', 'a58' ],
+        a47: [ 'a24', 'a47', 'a48' ],
+        a48: [ 'a36', 'a37', 'a39' ],
+        a49: [ 'a37', 'a38', 'a39' ],
+        a50: [ 'a40', 'a61', 'a62' ],
+        a51: [ 'a41', 'a63', 'a52' ],
+        a52: [ 'a41', 'a51', 'a56' ],
+        a53: [ 'a10', 'a43', 'a64' ],
+        a54: [ 'a42', 'a43', 'a65' ],
+        a55: [ 'a44', 'a57', 'a66' ],
+        a56: [ 'a44', 'a52', 'a67' ],
+        a57: [ 'a45', 'a55', 'a58' ],
+        a58: [ 'a46', 'a57', 'a68' ],
+        a59: [ 'a47', 'a68', 'a69' ],
+        a60: [ 'a47', 'a69', 'a70' ],
+        a61: [ 'a50', 'a71', 'a72' ],
+        a62: [ 'a50', 'a63', 'a73' ],
+        a63: [ 'a51', 'a62', 'a74' ],
+        a64: [ 'a53', 'a75', 'a76' ],
+        a65: [ 'a54', 'a75', 'a77' ],
+        a66: [ 'a55', 'a78', 'a79' ],
+        a67: [ 'a56', 'a79', 'a80' ],
+        a68: [ 'a35', 'a58', 'a59', 'a81' ],
+        a69: [ 'a59', 'a60', 'a82' ],
+        a70: [ 'a60', 'a82', 'a83' ],
+        a71: [ 'a84', 'a61', 'a73' ],
+        a72: [ 'a61', 'a85', 'a86' ],
+        a73: [ 'a71', 'a62', 'a74' ],
+        a74: [ 'a63', 'a73', 'a80' ],
+        a75: [ 'a64', 'a65', 'a87' ],
+        a76: [ 'a64', 'a87', 'a88' ],
+        a77: [ 'a65', 'a86', 'a89' ],
+        a78: [ 'a66', 'a89', 'a90' ],
+        a79: [ 'a66', 'a81', 'a91' ],
+        a80: [ 'a74', 'a67', 'a92' ],
+        a81: [ 'a68', 'a79', 'a82' ],
+        a82: [ 'a69', 'a70', 'a81' ],
+        a83: [ 'a70', 'a91', 'a93' ],
+        a84: [ 'a71', 'a87', 'a94' ],
+        a85: [ 'a72', 'a86', 'a89' ],
+        a86: [ 'a72', 'a77', 'a89' ],
+        a87: [ 'a75', 'a76', 'a84' ],
+        a88: [ 'a76', 'a94', 'a95' ],
+        a89: [ 'a85', 'a42', 'a77' ],
+        a90: [ 'a78', 'a91', 'a93' ],
+        a91: [ 'a79', 'a83', 'a90' ],
+        a92: [ 'a80', 'a97', 'a100' ],
+        a93: [ 'a83', 'a90', 'a99' ],
+        a94: [ 'a84', 'a88', 'a100' ],
+        a95: [ 'a88', 'a101', 'a102' ],
+        a96: [ 'B', 'a89', 'a103' ],
+        a97: [ 'a79', 'a92', 'a104' ],
+        a98: [ 'a100', 'a102', 'a104' ],
+        a99: [ 'a93', 'a103', 'a105' ],
+        a100: [ 'a94', 'a98' ],
+        a101: [ 'a95', 'a106', 'a107' ],
+        a102: [ 'a95', 'a98', 'a108' ],
+        a103: [ 'a96', 'a99', 'a109' ],
+        a104: [ 'a97', 'a98', 'a110', 'a111' ],
+        a105: [ 'a99', 'a109', 'a112' ],
+        a106: [ 'a108', 'a101', 'a113' ],
+        a107: [ 'a101', 'a112', 'a113' ],
+        a108: [ 'a102', 'a106', 'a110' ],
+        a109: [ 'a103', 'a105', 'a114' ],
+        a110: [ 'a104', 'a108', 'a115' ],
+        a111: [ 'B', 'a116', 'a114' ],
+        a112: [ 'a105', 'a107', 'a117', 'a118' ],
+        a113: [ 'a106', 'a107', 'a115' ],
+        a114: [ 'B', 'a109', 'a118' ],
+        a115: [ 'a110', 'a113', 'a117' ],
+        a116: [ 'a111', 'a117', 'a118' ],
+        a117: [ 'a112', 'a115', 'a116' ],
+        a118: [ 'a112', 'a114', 'a116' ],
+        a119: [ 'a6', 'a53', 'a32' ],
+        a120: [ 'a89', 'a67', 'a97' ]
+      };
+    
     let c3 = {
         A: [550, 950],
         B: [480,340],
@@ -856,8 +993,135 @@ endIcon.src = 'https://cdn-icons-png.flaticon.com/512/985/985802.png';
         a115: [600, 160],
         a116: [530, 250],
         a117: [500, 140],
-        a118: [450, 200]
+        a118: [450, 200],
+        a119: [800, 700],
+        a120: [600, 500]
     };
+    let c4 = {
+        A: [400.0, 800.4],
+        B: [323.81, 362.32],
+        a1: [392.38, 856.06],
+        a2: [476.19, 846.34],
+        a3: [476.19, 764.28],
+        a4: [342.86, 781.79],
+        a5: [522.86, 846.34],
+        a6: [598.1, 792.18],
+        a7: [526.86, 914.7],
+        a8: [411.43, 715.43],
+        a9: [331.43, 722.45],
+        a10: [278.1, 812.53],
+        a11: [533.33, 941.71],
+        a12: [468.57, 933.38],
+        a13: [430.48, 715.43],
+        a14: [304.76, 781.79],
+        a15: [228.57, 798.99],
+        a16: [255.24, 856.06],
+        a17: [331.43, 828.74],
+        a18: [476.19, 991.18],
+        a19: [426.67, 929.22],
+        a20: [449.52, 772.47],
+        a21: [389.71, 659.26],
+        a22: [514.29, 742.09],
+        a23: [312.38, 664.31],
+        a24: [217.14, 762.79],
+        a25: [263.43, 914.7],
+        a26: [354.29, 876.93],
+        a27: [389.71, 1010.77],
+        a28: [400.0, 941.71],
+        a29: [487.62, 590.59],
+        a30: [377.14, 609.26],
+        a31: [487.62, 685.05],
+        a32: [579.05, 742.09],
+        a33: [346.67, 558.78],
+        a34: [274.29, 639.73],
+        a35: [213.33, 722.45],
+        a36: [182.86, 865.32],
+        a37: [259.05, 937.55],
+        a38: [323.81, 926.11],
+        a39: [312.38, 1010.77],
+        a40: [503.24, 555.67],
+        a41: [380.95, 571.38],
+        a42: [503.24, 664.31],
+        a43: [598.1, 692.07],
+        a44: [323.81, 513.46],
+        a45: [285.71, 590.59],
+        a46: [247.62, 658.59],
+        a47: [152.38, 798.99],
+        a48: [217.14, 952.39],
+        a49: [297.14, 952.39],
+        a50: [514.29, 522.45],
+        a51: [407.62, 533.79],
+        a52: [369.52, 497.09],
+        a53: [674.29, 715.43],
+        a54: [571.43, 658.59],
+        a55: [266.67, 533.79],
+        a56: [369.14, 497.09],
+        a57: [247.62, 575.54],
+        a58: [209.52, 626.6],
+        a59: [106.67, 693.4],
+        a60: [85.71, 688.55],
+        a61: [590.48, 476.07],
+        a62: [483.81, 497.09],
+        a63: [445.71, 508.08],
+        a64: [735.24, 676.71],
+        a65: [636.19, 630.42],
+        a66: [194.29, 504.29],
+        a67: [369.52, 475.29],
+        a68: [179.05, 715.43],
+        a69: [95.24, 677.39],
+        a70: [87.62, 544.78],
+        a71: [609.52, 446.41],
+        a72: [601.9, 497.09],
+        a73: [517.14, 476.07],
+        a74: [449.52, 475.29],
+        a75: [674.29, 602.25],
+        a76: [715.24, 407.7],
+        a77: [640.0, 407.7],
+        a78: [202.29, 443.29],
+        a79: [171.43, 544.78],
+        a80: [438.1, 456.63],
+        a81: [171.43, 623.48],
+        a82: [114.29, 627.64],
+        a83: [76.19, 497.09],
+        a84: [628.57, 446.41],
+        a85: [590.48, 541.66],
+        a86: [628.57, 530.33],
+        a87: [666.67, 461.48],
+        a88: [666.67, 312.48],
+        a89: [571.43, 415.14],
+        a90: [164.76, 399.43],
+        a91: [126.67, 487.41],
+        a92: [438.1, 419.29],
+        a93: [144.76, 381.59],
+        a94: [617.14, 419.29],
+        a95: [590.48, 221.02],
+        a96: [393.14, 399.43],
+        a97: [571.43, 407.7],
+        a98: [612.0, 334.84],
+        a99: [144.76, 334.84],
+        a100: [590.48, 353.51],
+        a101: [533.33, 190.23],
+        a102: [560.0, 259.28],
+        a103: [221.33, 274.99],
+        a104: [495.24, 353.51],
+        a105: [266.67, 216.86],
+        a106: [481.14, 216.86],
+        a107: [400.0, 171.56],
+        a108: [514.29, 266.3],
+        a109: [262.86, 285.71],
+        a110: [476.19, 331.73],
+        a111: [400.0, 350.4],
+        a112: [317.14, 209.06],
+        a113: [438.1, 182.89],
+        a114: [317.14, 293.08],
+        a115: [457.14, 209.06],
+        a116: [426.67, 305.85],
+        a117: [407.62, 229.4],
+        a118: [342.86, 279.35],
+        a119: [647.62, 735.74],
+        a120: [342.86, 438.61]
+    };
+    
     
 
 function height_edge(chemin){
@@ -1178,10 +1442,19 @@ function dessinerAretes(chemin, coord, couleur = "white", largeur = 10) {
                 if (!arêtesDessinées.has(arête)) {
                     // Dessiner toute l'arête en blanc
                     ctx.beginPath();
-                    ctx.moveTo(xStart, yStart);
-                    ctx.lineTo(xEnd, yEnd);
+                    //ctx.moveTo(xStart, yStart);
+                    //ctx.lineTo(xEnd, yEnd);
                     ctx.strokeStyle = "white";
-                    ctx.lineWidth = largeur; // Largeur plus petite pour les arêtes blanches
+                    ctx.ellipse(
+                        200, // x du centre
+                        150, // y du centre
+                        100, // rayon horizontal (donne l'effet "largeur")
+                        60,  // rayon vertical (donne l'effet "hauteur")
+                        0,   // rotation (en radians)
+                        0,   // angle de départ
+                        2 * Math.PI // angle de fin (2π = cercle complet)
+                      );
+                    //ctx.lineWidth = largeur; // Largeur plus petite pour les arêtes blanches
                     ctx.stroke();
 
                     arêtesDessinées.add(arête);
@@ -1223,9 +1496,108 @@ function dessinerAretes(chemin, coord, couleur = "white", largeur = 10) {
     }
 }
 
+function dessinerAretes2(chemin, coord, couleur = "white", largeur = 10) {
+    let arêtesDessinées = new Set();
+    let groupe = 0;
+
+    // Parcourir toutes les arêtes dans le graphe
+    for (const [sommet, transitions] of Object.entries(chemin)) {
+        for (const [via, destinations] of Object.entries(transitions)) {
+            destinations.forEach(([destination, direction]) => {
+                const [xStart, yStart] = coord[sommet];
+                const [xEnd, yEnd] = coord[destination];
+                const centerX = (xStart + xEnd) / 2; // Centre de l'arc
+                const centerY = (yStart + yEnd) / 2;
+                const radiusX = Math.abs(xEnd - xStart) / 2; // Rayon horizontal
+                const radiusY = Math.abs(yEnd - yStart) / 2; // Rayon vertical
+                const arête = `${sommet}-${destination}`;
+
+                if (!arêtesDessinées.has(arête)) {
+                    ctx.beginPath();
+
+                    // Calculer les angles pour l'arc
+                    const angleStart = Math.atan2(yStart - centerY, xStart - centerX);
+                    const angleEnd = Math.atan2(yEnd - centerY, xEnd - centerX);
+
+                    // Dessiner en fonction de la direction
+                    if (direction === "droite") {
+                        ctx.ellipse(
+                            centerX, centerY,
+                            radiusX, radiusY,
+                            0, angleStart, angleEnd, false // Sens horaire
+                        );
+                    } else if (direction === "gauche") {
+                        ctx.ellipse(
+                            centerX, centerY,
+                            radiusX, radiusY,
+                            0, angleStart, angleEnd, true // Sens antihoraire
+                        );
+                    } else if (direction === "tout_droit") {
+                        ctx.moveTo(xStart, yStart);
+                        ctx.lineTo(xEnd, yEnd); // Ligne droite
+                    }
+
+                    ctx.strokeStyle = couleur;
+                    ctx.lineWidth = largeur;
+                    ctx.stroke();
+
+                    arêtesDessinées.add(arête);
+                }
+            });
+        }
+    }
+
+    // Dessiner les arêtes colorées par-dessus
+    arêtesDessinées.clear(); // Réinitialiser le set pour redessiner les arêtes colorées
+    for (const [sommet, transitions] of Object.entries(chemin)) {
+        for (const [via, destinations] of Object.entries(transitions)) {
+            destinations.forEach(([destination, direction]) => {
+                const [xStart, yStart] = coord[sommet];
+                const [xEnd, yEnd] = coord[destination];
+                const centerX = (xStart + xEnd) / 2;
+                const centerY = (yStart + yEnd) / 2;
+                const radiusX = Math.abs(xEnd - xStart) / 2;
+                const radiusY = Math.abs(yEnd - yStart) / 2;
+                const arête = `${sommet}-${destination}`;
+
+                if (!arêtesDessinées.has(arête)) {
+                    ctx.beginPath();
+
+                    const angleStart = Math.atan2(yStart - centerY, xStart - centerX);
+                    const angleEnd = Math.atan2(yEnd - centerY, xEnd - centerX);
+
+                    if (direction === "droite") {
+                        ctx.ellipse(
+                            centerX, centerY,
+                            radiusX, radiusY,
+                            0, angleStart, angleEnd, false
+                        );
+                    } else if (direction === "gauche") {
+                        ctx.ellipse(
+                            centerX, centerY,
+                            radiusX, radiusY,
+                            0, angleStart, angleEnd, true
+                        );
+                    } else if (direction === "tout_droit") {
+                        ctx.moveTo(xStart, yStart);
+                        ctx.lineTo(xEnd, yEnd);
+                    }
+
+                    ctx.strokeStyle = couleur_edge[groupe];
+                    ctx.lineWidth = largeur;
+                    ctx.stroke();
+
+                    arêtesDessinées.add(arête);
+                }
+            });
+            groupe = (groupe + 1) % couleur_edge.length;
+        }
+    }
+}
+
 // Fonction pour dessiner le graphe avec le sommet de départ mis à jour
 function sommet_acces(chemin, sommet, coord) {
-    dessinerAretes(chemin, coord, couleur = "white", largeur = 10);
+    dessinerAretes2(chemin, coord, couleur = "white", largeur = 10);
     for (let i = 0; i < arete_chemin.length; i++) {
         let [xs1, ys1, xs2, ys2] = arete_chemin[i]; // Déstructuration de l'arête
         ctx.beginPath();
@@ -1341,7 +1713,7 @@ function doublons(L) {
 
 
 function graph_rep(chemin, coord) {
-    dessinerAretes(chemin, coord, couleur = "white", largeur = 10);
+    dessinerAretes2(chemin, coord, couleur = "white", largeur = 10);
     for (let [xs1, ys1, xs2, ys2] of arete_chemin) {
         ctx.beginPath();
         ctx.moveTo(xs1, ys1);
@@ -1493,8 +1865,8 @@ function checkSommetInChemin(chemin, cle1, cle2, sommet) {
 
 
 // Dessiner le graphe initial
-var chemin=t3;
-var nodeCoordinates = c3;
+var chemin=t3_bis;
+var nodeCoordinates = c4;
 soustraireUnRGB(25);
 /*graph_rep(chemin, nodeCoordinates);*/
 document.getElementById('choiceButton').addEventListener('click', choix_chemin);
